@@ -1,0 +1,52 @@
+body {
+    background-color: #454B5E;
+    font-family: Verdana, Arial, Sans-serif;
+}
+
+.topBanner {
+    display: flex;
+    justify-content: space-around;
+    /* background-color: blue; */
+}
+
+
+button {
+    background-color: #FF9900;
+}
+
+
+#categoryBar {
+    display: flex;
+    justify-content: center;
+    font-size: 36px;
+    color: rgb(255, 255, 255);
+}
+
+.categoryLink {
+    color: rgb(255, 255, 255);
+    text-align: center;
+    border-right-style: solid;
+    padding-left: 1%;
+    padding-right: 1%;
+    
+}
+
+a {
+    text-decoration: none;
+}
+
+a:link {
+    color: rgb(255, 255, 255);
+}
+
+a:visited {
+    color: rgb(255, 255, 255);
+}
+
+a:hover {
+    color: #2BC9DE;
+}
+
+a:active {
+    color: #2BC9DE;
+}

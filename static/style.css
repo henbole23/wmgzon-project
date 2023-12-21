@@ -50,3 +50,16 @@ a:hover {
 a:active {
     color: #2BC9DE;
 }
+
+
+.productBar {
+    display: flex;
+    justify-content: space-around;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 25px;
+    max-width: 1850px;
+    height: 250px;
+    background-color: #D9D9D9;
+}

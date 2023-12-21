@@ -19,8 +19,10 @@ function displayProducts(products) {
         card.classList.add('productCard');
 
         card.innerHTML = `
-            <img class="productImg" src="${product.image}" alt="${product.title}
+            <img class="productImg" src="${product.image}" alt="${product.title}>
+            <p>HI</p>
         `;
+        container.appendChild(card)
         
     })
-}
+} 

@@ -1,9 +1,39 @@
 {
+    "format": [
+        {
+            "type": "Vinyl",
+            "price": 19.99
+        },
+        {
+            "type": "CD",
+            "price": 9.99
+        },
+        {
+            "type": "Casseette",
+            "price": 9.99
+        },
+        {
+            "type": "Digital",
+            "price": 6.99
+        }
+    ],
     "products": [
         {
-            "title": "NAME",
-            "price": "PRICE",
-            "image": "IMAGE"
+            "id": "1",
+            "title": "Back in Black",
+            "artwork": "IMAGE1",
+            "formats": [
+
+            ]
+        },
+        {
+            "id": "2",
+            "title": "NAME2",
+            "price": "PRICE2",
+            "artwork": "IMAGE2"
         }
+    ],
+    "songs": [
+
     ]
 }

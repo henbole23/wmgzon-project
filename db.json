@@ -1,19 +1,40 @@
 {
+    "$schema": "https://getcomposer.org/schema.json",
+    "title": "format",
+    "type": "object",
+    "properties": {
+        "form": {
+            "type": "string",
+            "description": "the format of the album"
+        },
+        "price": {
+            "type": "number",
+            "multipleOf": 0.01,
+            "description": "how much the chosen format costs"
+        }
+    }
+}
+
+
+
+
+
+{
     "format": [
         {
-            "type": "Vinyl",
+            "form": "Vinyl",
             "price": 19.99
         },
         {
-            "type": "CD",
+            "form": "CD",
             "price": 9.99
         },
         {
-            "type": "Casseette",
+            "form": "Cassette",
             "price": 9.99
         },
         {
-            "type": "Digital",
+            "form": "Digital",
             "price": 6.99
         }
     ],
@@ -23,7 +44,10 @@
             "title": "Back in Black",
             "artwork": "IMAGE1",
             "formats": [
-
+                "Vinyl",
+                "CD",
+                "Cassette",
+                "Digital"
             ]
         },
         {

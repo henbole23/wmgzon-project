@@ -25,4 +25,8 @@ function displayProducts(products) {
         container.appendChild(card)
         
     })
-} 
+}
+
+function populateProductCard() {
+    
+}

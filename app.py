@@ -1,5 +1,10 @@
 from flask import Flask
 from flask import render_template
+import sqlite3
+
+db = sqlite3.connect("products.db")
+cursor = db.cursor()
+
 
 app = Flask(__name__)
 

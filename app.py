@@ -40,6 +40,10 @@ def phones():
 def music():
     return render_template('index.html')
 
+@app.route('/music/example')
+def get_product_page():
+    return render_template('productPage.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

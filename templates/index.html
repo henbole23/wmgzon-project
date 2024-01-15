@@ -18,7 +18,7 @@
             </div>
 
             <a href="/basket">
-                <img src='static/shopping_cart.png' alt="speedy basket" style = "width: 100px; height: 100px;"/>
+                <img src='../static/shopping_cart.png' alt="speedy basket" style="width: 100px; height: 100px;"/>
             </a>
 
             <a href="/accountSignIn">LOGIN/SIGNUP</a>
@@ -30,19 +30,19 @@
                 <a href="{{ url_for('animals') }}">Animals</a>
             </div>
             <div class="categoryLink">
-                <a href="/books">Books</a>
+                <a href="{{ url_for('books') }}">Books</a>
             </div>
             <div class="categoryLink">
-                <a href="/carparts">Car Parts</a>
+                <a href="{{ url_for('car_parts') }}">Car Parts</a>
             </div>
             <div class="categoryLink">
-                <a href="/music">Music</a>
+                <a href="{{ url_for('music') }}">Music</a>
             </div>
             <div class="categoryLink">
-                <a href="/phones">Phones</a>
+                <a href="{{ url_for('phones') }}">Phones</a>
             </div>
             <div class="categoryLink" style="border-right-style: none">
-                <a href="/sports">Sports</a>
+                <a href="{{ url_for('sports') }}">Sports</a>
             </div>
         </div>
     </div>
@@ -59,7 +59,6 @@
             {% endfor %}
         </div>
     </div>
-    <!-- <script src="../productBar.js"></script> -->
 
     <div class="productSection">
         <div class="productList">

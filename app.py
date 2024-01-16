@@ -1,10 +1,8 @@
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template
 import sqlite3
 
 db = sqlite3.connect("products.db")
 cursor = db.cursor()
-
 
 app = Flask(__name__)
 
@@ -45,6 +43,10 @@ def phones():
 @app.route('/music')
 def music():
     return render_template('index.html')
+
+@app.route('/music/example')
+def get_product_page():
+    return render_template('productPage.html')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+
+<body>
+    <div class=header>
+        <div class=topBanner>
+            <a href="/">
+                <img src='../static/wmgzon_logo.png' alt="wmgzon logo" style="width: 250px;"/>
+            </a>
+
+            <div class="searchBar">
+                <input type="text" placeholder="Find your favourite products" style="width: 500px; height: 30px;">
+                <button type="button" style="height: 30px;">SEARCH</button>
+            </div>
+
+            <a href="/basket">
+                <img src='../static/shopping_cart.png' alt="speedy basket" style="width: 100px; height: 100px;"/>
+            </a>
+
+            <a href="/accountSignIn">LOGIN/SIGNUP</a>
+        </div>
+
+        <div id="categoryBar">
+            <div class="categoryLink">
+                <a href="{{ url_for('animals') }}">Animals</a>
+            </div>
+            <div class="categoryLink">
+                <a href="{{ url_for('books') }}">Books</a>
+            </div>
+            <div class="categoryLink">
+                <a href="{{ url_for('car_parts') }}">Car Parts</a>
+            </div>
+            <div class="categoryLink">
+                <a href="{{ url_for('music') }}">Music</a>
+            </div>
+            <div class="categoryLink">
+                <a href="{{ url_for('phones') }}">Phones</a>
+            </div>
+            <div class="categoryLink" style="border-right-style: none">
+                <a href="{{ url_for('sports') }}">Sports</a>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <img src="../static/products_artwork/backinblack_acdc.png" alt="artwork" style="width: 525px">
+    </div>
+    <div>
+        <p>Back in Black</p>
+        <p>AC/DC</p>
+        <table class="fixed_header">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Length</th>
+                <th>Price</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>row 1-0</td>
+                <td>row 1-1</td>
+                <td>row 1-2</td>
+                <td>row 1-3</td>
+                <td>row 1-4</td>
+              </tr>
+              <tr>
+                <td>row 2-0</td>
+                <td>row 2-1</td>
+                <td>row 2-2</td>
+                <td>row 2-3</td>
+                <td>row 2-4</td>
+              </tr>
+              <tr>
+                <td>row 3-0</td>
+                <td>row 3-1</td>
+                <td>row 3-2</td>
+                <td>row 3-3</td>
+                <td>row 3-4</td>
+              </tr>
+              <tr>
+                <td>row 4-0</td>
+                <td>row 4-1</td>
+                <td>row 4-2</td>
+                <td>row 4-3</td>
+                <td>row 4-4</td>
+              </tr>
+              <tr>
+                <td>row 5-0</td>
+                <td>row 5-1</td>
+                <td>row 5-2</td>
+                <td>row 5-3</td>
+                <td>row 5-4</td>
+              </tr>
+              <tr>
+                <td>row 6-0</td>
+                <td>row 6-1</td>
+                <td>row 6-2</td>
+                <td>row 6-3</td>
+                <td>row 6-4</td>
+              </tr>
+              <tr>
+                <td>row 7-0</td>
+                <td>row 7-1</td>
+                <td>row 7-2</td>
+                <td>row 7-3</td>
+                <td>row 7-4</td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+    <div>
+        <p>Format</p>
+        <div>
+            <button>Vinyl</button>
+            <button>CD</button>
+            <button>Cassette</button>
+            <button>Digital</button>
+        </div>
+        <p>£9.99</p>
+        <button>Add to Basket</button>
+    </div>
+
+    <div>
+        <p>Artist Bios</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in 
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in 
+            culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+    <div>
+        <p>Customer Rating</p>
+        <p>*****</p>
+        <button>Leave a Rating</button>
+    </div>
+</body>
+</html>

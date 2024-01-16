@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="../static/style.css">
 </head>
 
@@ -17,7 +18,7 @@
             </div>
 
             <a href="/basket">
-                <img src='static/shopping_cart.png' alt="speedy basket" style = "width: 100px; height: 100px;"/>
+                <img src='../static/shopping_cart.png' alt="speedy basket" style="width: 100px; height: 100px;"/>
             </a>
 
             <a href="/accountSignIn">LOGIN/SIGNUP</a>
@@ -26,22 +27,22 @@
     
         <div id="categoryBar">
             <div class="categoryLink">
-                <a href="/animals">Animals</a>
+                <a href="{{ url_for('animals') }}">Animals</a>
             </div>
             <div class="categoryLink">
-                <a href="/books">Books</a>
+                <a href="{{ url_for('books') }}">Books</a>
             </div>
             <div class="categoryLink">
-                <a href="/carparts">Car Parts</a>
+                <a href="{{ url_for('car_parts') }}">Car Parts</a>
             </div>
             <div class="categoryLink">
-                <a href="/music">Music</a>
+                <a href="{{ url_for('music') }}">Music</a>
             </div>
             <div class="categoryLink">
-                <a href="/phones">Phones</a>
+                <a href="{{ url_for('phones') }}">Phones</a>
             </div>
             <div class="categoryLink" style="border-right-style: none">
-                <a href="/sports">Sports</a>
+                <a href="{{ url_for('sports') }}">Sports</a>
             </div>
         </div>
     </div>
@@ -49,32 +50,25 @@
     <div class="trendingProducts" id="productBar">
         <h3 style="padding-left:25px; margin-top: 5px;">Trending Right Now</h3>
         <div class="productBar">
+            {% for product in productbar: %}
             <div class="productCard">
                 <img src="static\products_artwork\backinblack_acdc.png" alt="back in black album art" style="width: 100px;">
-                <alb class="album">Back in Black</alb>
-                <artist class="artist">AC/DC</artist>
+                <alb class="album">{{product["album_title"]}}</alb>
+                <artist class="artist">{{product["artist_name"]}}</artist>
             </div>
+            {% endfor %}
         </div>
     </div>
-    <!-- <script src="../productBar.js"></script> -->
 
     <div class="productSection">
         <div class="productList">
+            {% for product in productlist: %}
             <div class="productCard">
                 <img src="static\products_artwork\backinblack_acdc.png" alt="back in black album art" style="width: 100px;">
-                <alb class="album">Back in Black</alb>
-                <artist class="artist">AC/DC</artist>
+                <alb class="album">{{product["album_title"]}}</alb>
+                <artist class="artist">{{product["artist_name"]}}</artist>
             </div>
-            <div class="productCard">
-                <img src="static\products_artwork\backinblack_acdc.png" alt="back in black album art" style="width: 100px;">
-                <alb class="album">Back in Black</alb>
-                <artist class="artist">AC/DC</artist>
-            </div>
-            <div class="productCard">
-                <img src="static\products_artwork\backinblack_acdc.png" alt="back in black album art" style="width: 100px;">
-                <alb class="album">Back in Black</alb>
-                <artist class="artist">AC/DC</artist>
-            </div>
+            {% endfor %}
         </div>
         
     </div>

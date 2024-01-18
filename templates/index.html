@@ -50,11 +50,11 @@
     <div class="trendingProducts" id="productBar">
         <h3 style="padding-left:25px; margin-top: 5px;">Trending Right Now</h3>
         <div class="productBar">
-            {% for album in albums: %}
+            {% for product in products: %}
             <div class="productCard">
-                <img src="static\products_artwork\{{ album[1] }}" alt="back in black album art" style="width: 100px;">
-                <alb class="album">{{ album[0] }}</alb>
-                <artist class="artist">{{product["artist_name"]}}</artist>
+                <img src="static\products_artwork\{{ product[3] }}" alt="{{ product[2] }} album art" style="width: 100px;">
+                <alb class="album">{{ product[2] }}</alb>
+                <artist class="artist">{{product[1]}}</artist>
             </div>
             {% endfor %}
         </div>

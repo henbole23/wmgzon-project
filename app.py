@@ -6,22 +6,20 @@ app = Flask(__name__)
 db = sqlite3.connect("products.db")
 cursor = db.cursor()
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS ARTISTS (artist_id INTEGER PRIMARY KEY AUTOINCREMENT, artist_name VARCHAR(25) NOT NULL, bio TEXT)""");
-cursor.execute("""INSERT INTO ARTISTS (artist_name,bio) VALUES ("AC/DC", "A")""") 
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS ALBUMS (album_id INTEGER PRIMARY KEY, album_name VARCHAR(25) NOT NULL, artwork TEXT NOT NULL, genre VARCHAR(25) NOT NULL, artist_id INTEGER, FOREIGN KEY(artist_id) REFERENCES artists(artist_id))""");
-cursor.execute("""INSERT INTO ALBUMS (album_name,artwork,genre,artist_id) VALUES ("Back in Black", "backinblack_acdc.jpg", "Hard Rock", "1")""")
-
-db.close()
 
 @app.route('/')
 def index():
     db = sqlite3.connect("products.db")
     cursor = db.cursor()
 
-    cursor.execute('SELECT * FROM ALBUMS')
+    album_fetch = """SELECT ARTISTS.artist_id, ARTISTS.artist_name, ALBUMS.album_name, albums.artwork 
+                     FROM ARTISTS
+                     INNER JOIN ALBUMS ON ARTISTS.artist_id=ALBUMS.artist_id"""
+
+    cursor.execute(album_fetch)
     products = cursor.fetchall()
-    
+    for product in products:
+        print(product)
     db.close()
 
     return render_template('index.html', products=products)

@@ -1,10 +1,12 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask_bcrypt import Bcrypt
 from forms import *
 import sqlite3
 import secrets
 
 app = Flask(__name__)
 token = secrets.token_urlsafe(21)
+bcrypt = Bcrypt(app)
 app.secret_key = token
 
 
@@ -30,36 +32,68 @@ def index():
 
     return render_template('index.html', products=products)
 
-@app.route('/accountSignIn') # type: ignore
-def account_sign_in():
-    
-    form = SignInForm()
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    register_form = RegisterForm()
+    if request.method == 'POST':
+        with sqlite3.connect("accounts.db") as db:
+            cursor = db.cursor()
 
-    if form.validate_on_submit():
-        db = sqlite3.connect("accounts.db")
-        cursor = db.cursor()
+            add_user = """INSERT INTO USERS (user_name,password,type)
+                          VALUES(?,?,?)"""
 
-        user_name = form.user_name.data
-        password = form.password.data
+            new_user = request.form['username']
+
+            hashed_password = bcrypt.generate_password_hash(request.form['password'])
+
+            cursor.execute(add_user, (new_user, hashed_password, 'customer'))
+            db.commit()
+
+        return redirect(url_for('index'))
+    elif request.method == 'GET':
+        return render_template('register.html', form=register_form)
+    else:
+        flash("Field Required")
+        print("Empty Fields")
+        return render_template('register.html', form=register_form)
 
 
-        fetch_user = """SELECT *
-                        FROM USERS
-                        WHERE user_name = ?"""
+@app.route('/login', methods=['POST', 'GET']) 
+def login():
+    # Set the form inputs
+    login_form = LoginForm()
 
-        cursor.execute(fetch_user, (user_name,))
+    if request.method == 'POST':
+        # If form inputs aren't valid
+        # if not login_form.validate_on_submit():
+        #     flash("Field Required")
+        #     print("Empty Fields")
+        #     return render_template('login.html', form=login_form)
+        # else:
+            print("VALID")
+            # Connect to account database
+            db = sqlite3.connect("accounts.db")
+            cursor = db.cursor()
 
-        column_names = [desc[0] for desc in cursor.description]
+            username = request.form['username']
+            hashed_password = bcrypt.generate_password_hash(request.form['password'])
 
-        user_details = cursor.fetchone()
-        user_dict = dict(zip(column_names, user_details))
-        print(f"USER DICT {user_dict}")
+            fetch_user = """SELECT *
+                    FROM USERS
+                    WHERE user_name = ?
+                    AND password = ?"""
+            
+            cursor.execute(fetch_user, (username, hashed_password))
+            data = cursor.fetchone()
+            print(data)
+            if data:
+                # returns error if data already exists in database
+                print("AUTH SUCCESSFUL")
+            else:
+                return render_template("error.html")     
+    elif request.method == 'GET':
+        return render_template('login.html', form=login_form)
 
-        if user_details != None and password == user_dict.password:
-            print("AUTH SUCCESS")
-            return redirect( url_for('index'))
-        
-    return render_template('accountLogin.html')
 
 @app.route('/admin/product_database')
 def database_admin():

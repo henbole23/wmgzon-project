@@ -1,9 +1,16 @@
 from flask_wtf import FlaskForm
 import wtforms as form
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import ValidationError, InputRequired, DataRequired, Length
 from wtforms.widgets import PasswordInput
 
 
-class SignInForm(FlaskForm):
-    user_name = form.StringField('Username', validators=[InputRequired(), Length(0, 20)])
-    password = form.StringField('Password', widget=PasswordInput(hide_value=False))
+class LoginForm(FlaskForm):
+    username = form.StringField(label='username', validators=[DataRequired(), Length(min=4, max=20)])
+    password = form.PasswordField(label='Password', validators=[DataRequired(), Length(min=4, max=20)])
+    submit = form.SubmitField("Log In")
+
+
+class RegisterForm(FlaskForm):
+    username = form.StringField(label='username', validators=[InputRequired(), Length(min=4, max=20)])
+    password = form.PasswordField(label='Password', validators=[InputRequired(), Length(min=4, max=20)])
+    submit = form.SubmitField("Register")

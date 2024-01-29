@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from forms import *
 import sqlite3
@@ -7,8 +8,22 @@ import secrets
 app = Flask(__name__)
 token = secrets.token_urlsafe(21)
 bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
 app.secret_key = token
 
+class User(UserMixin):
+    def __init__(self, id, username, password, user):
+         self.id = id
+         self.username = username
+         self.password = password
+         self.user_type = user
+         self.authenticated = False
+
+    def is_authenticated(self):
+         return self.authenticated
+    
+    def get_id(self):
+         return self.id
 
 def get_all_products():
     db = sqlite3.connect("products.db")
@@ -24,6 +39,19 @@ def get_all_products():
     db.close()
 
     return products
+
+@login_manager.user_loader
+def load_user(user_id):
+    db = sqlite3.connect('accounts.db')
+    cursor = db.cursor
+    fetch_user = """SELECT * FROM USERS WHERE user_id = ?"""
+
+    cursor.execute(fetch_user, [user_id])
+    data = cursor.fetchone()
+    if data is None:
+        return None
+    else:
+        return User(data[0], data[1], data[2], data[3])
 
 
 @app.route('/')
@@ -60,17 +88,12 @@ def register():
 
 @app.route('/login', methods=['POST', 'GET']) 
 def login():
+    if current_user.is_authenticated():
+        return redirect(url_for('index'))
     # Set the form inputs
     login_form = LoginForm()
 
     if request.method == 'POST':
-        # If form inputs aren't valid
-        # if not login_form.validate_on_submit():
-        #     flash("Field Required")
-        #     print("Empty Fields")
-        #     return render_template('login.html', form=login_form)
-        # else:
-        print("VALID")
         # Connect to account database
         db = sqlite3.connect("accounts.db")
         cursor = db.cursor()
@@ -86,17 +109,17 @@ def login():
         cursor.execute(fetch_user, (username, hashed_password))
         data = cursor.fetchone()
         print(data)
-        if data:
-            # returns error if data already exists in database
-            print("AUTH SUCCESSFUL")
-        else:
-            return render_template("error.html")     
+
+        return render_template("index.html", user_data = data)
+        
     elif request.method == 'GET':
         return render_template('login.html', form=login_form)
     else:
         flash("Field Required")
         print("Empty Fields")
         return render_template('login.html', form=login_form)
+    
+    return render_template('login.html', form=login_form)
 
 
 @app.route('/admin', methods=['GET'])
@@ -113,6 +136,8 @@ def database_admin():
     db.close()
 
     return render_template('admin.html', users=data)
+
+
     
 
 @app.route('/basket')

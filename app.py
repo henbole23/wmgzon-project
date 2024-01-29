@@ -70,34 +70,50 @@ def login():
         #     print("Empty Fields")
         #     return render_template('login.html', form=login_form)
         # else:
-            print("VALID")
-            # Connect to account database
-            db = sqlite3.connect("accounts.db")
-            cursor = db.cursor()
+        print("VALID")
+        # Connect to account database
+        db = sqlite3.connect("accounts.db")
+        cursor = db.cursor()
 
-            username = request.form['username']
-            hashed_password = bcrypt.generate_password_hash(request.form['password'])
+        username = request.form['username']
+        hashed_password = bcrypt.generate_password_hash(request.form['password'])
 
-            fetch_user = """SELECT *
-                    FROM USERS
-                    WHERE user_name = ?
-                    AND password = ?"""
-            
-            cursor.execute(fetch_user, (username, hashed_password))
-            data = cursor.fetchone()
-            print(data)
-            if data:
-                # returns error if data already exists in database
-                print("AUTH SUCCESSFUL")
-            else:
-                return render_template("error.html")     
+        fetch_user = """SELECT *
+                FROM USERS
+                WHERE user_name = ?
+                AND password = ?"""
+        
+        cursor.execute(fetch_user, (username, hashed_password))
+        data = cursor.fetchone()
+        print(data)
+        if data:
+            # returns error if data already exists in database
+            print("AUTH SUCCESSFUL")
+        else:
+            return render_template("error.html")     
     elif request.method == 'GET':
+        return render_template('login.html', form=login_form)
+    else:
+        flash("Field Required")
+        print("Empty Fields")
         return render_template('login.html', form=login_form)
 
 
-@app.route('/admin/product_database')
+@app.route('/admin', methods=['GET'])
 def database_admin():
-    return render_template('databaseAdmin.html')
+    db = sqlite3.connect("accounts.db")
+    cursor = db.cursor()
+
+    fetch_all_users = """SELECT * FROM USERS"""
+
+    cursor.execute(fetch_all_users)
+    data = cursor.fetchall()
+    print(data)
+    
+    db.close()
+
+    return render_template('admin.html', users=data)
+    
 
 @app.route('/basket')
 def basket():

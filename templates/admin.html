@@ -7,5 +7,23 @@
 
 <body>
     <h1>ADMIN</h1>
+    <table class="fixed_header">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Account Type</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for user in users: %}
+            <tr>
+              <td>{{ user[0] }}</td>
+              <td>{{ user[1] }}</td>
+              <td>{{ user[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

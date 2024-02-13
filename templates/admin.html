@@ -12,18 +12,44 @@
           <tr>
             <th>ID</th>
             <th>Username</th>
+            <th>Email</th>
             <th>Account Type</th>
+            <th>Date Added</th>
           </tr>
         </thead>
         <tbody>
             {% for user in users: %}
             <tr>
-              <td>{{ user[0] }}</td>
-              <td>{{ user[1] }}</td>
-              <td>{{ user[3] }}</td>
+              <td>{{ user.user_id }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.type }}</td>
+              <td>{{ user.date_added }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <table class="fixed_header">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Album Name</th>
+          <th>Artwork</th>
+          <th>Genre</th>
+          <th>Release Year</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for album in albums: %}
+          <tr>
+            <td>{{ album.album_id }}</td>
+            <td>{{ album.name }}</td>
+            <td>{{ album.artwork }}</td>
+            <td>{{ user.genre }}</td>
+            <td>{{ user.year }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
 </body>
 </html>

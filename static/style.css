@@ -62,6 +62,7 @@ a:active {
     max-width: 1850px;
     height: 250px;
     background-color: #FF9900;
+    padding-bottom:12.5px
 }
 
 .productBar {
@@ -101,7 +102,7 @@ a:active {
     margin: auto;
     margin-top: 25px;
     margin-bottom: 25px;
-    padding: 12.5px;
+    padding-top: 12.5px;
     border-radius: 25px;
     max-width: 1850px;
     height: 500px;
@@ -118,7 +119,7 @@ a:active {
 }
 
 .fixed_header{
-    width: 400px;
+    width: 800px;
     table-layout: fixed;
     border-collapse: collapse;
 }

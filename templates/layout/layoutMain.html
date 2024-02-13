@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="../static/style.css">
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block header %}
+        <div class=header>
+            <div class=topBanner>
+                <a href="/">
+                    <img src='../static/wmgzon_logo.png' alt="wmgzon logo" style="width: 250px;"/>
+                </a>
+
+                <div class="searchBar">
+                    <input type="text" placeholder="Find your favourite products" style="width: 500px; height: 30px;">
+                    <button type="button" style="height: 30px;">SEARCH</button>
+                </div>
+
+                <a href="/basket">
+                    <img src='../static/shopping_cart.png' alt="speedy basket" style="width: 100px; height: 100px;"/>
+                </a>
+                {% if current_user.is_authenticated %}
+                    <p>Welcome {{ current_user.username }}</p>
+                    <a href="{{ url_for('logout') }}">LOGOUT</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">LOGIN/SIGNUP</a>
+                
+                {% endif %}
+            </div>
+            
+        
+            <div id="categoryBar">
+                <div class="categoryLink">
+                    <a href="{{ url_for('animals') }}">Animals</a>
+                </div>
+                <div class="categoryLink">
+                    <a href="{{ url_for('books') }}">Books</a>
+                </div>
+                <div class="categoryLink">
+                    <a href="{{ url_for('car_parts') }}">Car Parts</a>
+                </div>
+                <div class="categoryLink">
+                    <a href="{{ url_for('music') }}">Music</a>
+                </div>
+                <div class="categoryLink">
+                    <a href="{{ url_for('phones') }}">Phones</a>
+                </div>
+                <div class="categoryLink" style="border-right-style: none">
+                    <a href="{{ url_for('sports') }}">Sports</a>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>

@@ -14,10 +14,13 @@
         </div>
     </div>
     <a href="{{ url_for('register')}}">SIGN UP</a>
-
+    
     
     <div>
-        <form class="login form" action="http://127.0.0.1:5000/login" method="post">
+        <form class="login form" action="" method="post">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
+
             <table>
                 <tr>
                     <td>{{ form.username.label }}</td>

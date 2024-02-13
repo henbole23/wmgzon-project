@@ -15,9 +15,22 @@
         </div>
     </div>
     <a href="{{ url_for('login')}}">LOG IN</a>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <div>
         <form class="register form" action="http://127.0.0.1:5000/register" method="post">
             <table>
+                <tr>
+                    <td>{{ form.email.label }}</td>
+                    <td>{{ form.email }}</td>
+                </tr>
                 <tr>
                     <td>{{ form.username.label }}</td>
                     <td>{{ form.username }}</td>

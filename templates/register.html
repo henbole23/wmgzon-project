@@ -25,22 +25,24 @@
         {% endif %}
     {% endwith %}
     <div>
-        <form class="register form" action="http://127.0.0.1:5000/register" method="post">
+        <form class="register form" method="POST">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
             <table>
                 <tr>
                     <td>{{ form.email.label }}</td>
-                    <td>{{ form.email }}</td>
+                    <td>{{ form.email() }}</td>
                 </tr>
                 <tr>
                     <td>{{ form.username.label }}</td>
-                    <td>{{ form.username }}</td>
+                    <td>{{ form.username() }}</td>
                 </tr>
                 <tr>
                     <td>{{ form.password.label }}</td>
-                    <td>{{ form.password }}</td>
+                    <td>{{ form.password() }}</td>
                 </tr>
                 <tr>
-                    <td>{{ form.submit }}</td>
+                    <td>{{ form.submit() }}</td>
                 </tr>
             </table>
         </form>

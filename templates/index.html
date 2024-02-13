@@ -9,14 +9,14 @@
 <div class="trendingProducts" id="productBar">
     <h3 style="padding-left:25px; margin-top: 5px;">Trending Right Now</h3>
     <div class="productBar">
-        {% for product in products: %}
+        <!-- {% for product in products: %}
         <div class="productCard">
             <img src="static\products_artwork\{{ product[3] }}" alt="{{ product[2] }} album art" style="width: 100px;">
             <alb class="album">{{ product[2] }}</alb>
             <artist class="artist">{{product[1]}}</artist>
             <button>Choose Format</button>
         </div>
-        {% endfor %}
+        {% endfor %} -->
     </div>
 </div>
 
@@ -24,10 +24,10 @@
     <div class="productList">
         {% for product in products: %}
         <div class="productCard">
-            <img src="static\products_artwork\{{ product[3] }}" alt="{{ product[2] }} album art" style="width: 100px;">
-            <alb class="album">{{ product[2] }}</alb>
-            <artist class="artist">{{product[1]}}</artist>
-            <a href="{{ url_for('get_product_page', album_id= product[0]) }}">
+            <img src="static\products_artwork\{{ product.artwork }}" alt="{{ product.name }} album art" style="width: 100px;">
+            <alb class="album">{{ product.name }}</alb>
+            <artist class="artist">{{product.artist}}</artist>
+            <a href="{{ url_for('get_product_page', album_id= product.album_id) }}">
                 <button id="productPageButton">Choose Format</button>
             </a>
         </div>

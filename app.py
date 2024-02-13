@@ -138,9 +138,8 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     register_form = RegisterForm()
-    if request.method == 'POST' and register_form.validate_on_submit():
+    if register_form.validate_on_submit():
         user = Users.query.filter_by(email=request.form['email']).first()
-        # user = db.session.scalars(db.select(Users).filter_by(email=request.form['email'])).first()
         if user is None:
             username = request.form['username']
             user = Users(username=username,
@@ -151,7 +150,7 @@ def register():
 
             return redirect(url_for('index'))
     
-    
+    print(f"FORM VALID: {register_form.validate_on_submit()}")
     return render_template('register.html', form=register_form)
     # else:
     #     flash("Field Required")

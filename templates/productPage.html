@@ -47,11 +47,13 @@
     </div>
 
     <div>
-        <img src="../static/products_artwork/{{ product[3] }}" alt="artwork" style="width: 525px">
+        <img src="../static/products_artwork/{{ product.artwork }}" alt="artwork" style="width: 525px">
     </div>
     <div>
-        <p>{{ product[2] }}</p>
-        <p>{{ product[1] }}</p>
+        <p>{{ product.name }}</p>
+        {% for artist in product.album_artists: %}
+        <p>{{ artist.name  }}</p>
+        {% endfor %}
         <table class="fixed_header">
             <thead>
               <tr>
@@ -128,8 +130,8 @@
     </div>
 
     <div>
-        <p>Artist Bios</p>
-        <p>{{ product[4] }}</p>
+        <p>Artist Bio</p>
+        <p>{{ product.album_artists[0].bio }}</p>
     </div>
     <div>
         <p>Customer Rating</p>

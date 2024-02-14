@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <h1>ADMIN</h1>
+    <h1>MUSIC ADMIN</h1>
     <table class="fixed_header">
         <thead>
           <tr>
@@ -45,11 +45,14 @@
             <td>{{ album.album_id }}</td>
             <td>{{ album.name }}</td>
             <td>{{ album.artwork }}</td>
-            <td>{{ user.genre }}</td>
-            <td>{{ user.year }}</td>
+            <td>{{ album.genre }}</td>
+            <td>{{ album.year }}</td>
           </tr>
           {% endfor %}
       </tbody>
   </table>
+  <a href="{{ url_for('add_album') }}"><button>Add Product</button></a>
+  <button>Edit Product</button>
+  <button>Remove Product</button>
 </body>
 </html>

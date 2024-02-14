@@ -3,8 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
 from flask_bcrypt import Bcrypt
 from datetime import datetime
-from forms import *
-import sqlite3
+from forms import LoginForm, RegisterForm, AdminAlbumForm
 import secrets
 
 
@@ -36,25 +35,25 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
-    type = db.Column(db.String(25), default="Customer")
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    type = db.Column(db.String(25), default="Customer", nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     def get_id(self):
            return (self.user_id)
     
 artist_album = db.Table('ARTISTALBUM',
-                          db.Column('artist_id', db.Integer, db.ForeignKey('ARTISTS.artist_id')),
-                          db.Column('album_id', db.Integer, db.ForeignKey('ALBUMS.album_id'))
+                          db.Column('artist_name', db.String, db.ForeignKey('ARTISTS.name')),
+                          db.Column('album_name', db.String, db.ForeignKey('ALBUMS.name'))
                           )
 
 artist_song = db.Table('ARTISTSONG',
-                          db.Column('artist_id', db.Integer, db.ForeignKey('ARTISTS.artist_id')),
-                          db.Column('song_id', db.Integer, db.ForeignKey('SONGS.song_id'))
+                          db.Column('artist_name', db.String, db.ForeignKey('ARTISTS.name')),
+                          db.Column('song_name', db.String, db.ForeignKey('SONGS.name'))
                           )
 
 album_song = db.Table('ALBUMSONG',
-                          db.Column('album_id', db.Integer, db.ForeignKey('ALBUMS.album_id'), primary_key=True),
-                          db.Column('song_id', db.Integer, db.ForeignKey('SONGS.song_id'), primary_key=True)
+                          db.Column('album_name', db.String, db.ForeignKey('ALBUMS.name'), primary_key=True),
+                          db.Column('song_name', db.String, db.ForeignKey('SONGS.name'), primary_key=True)
                           )
 
 class Artists(db.Model):
@@ -104,35 +103,10 @@ class OrderItem(db.Model):
     fk_format_id = db.Column(db.Integer, db.ForeignKey("FORMATS.format_id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
-# def get_all_products():
-#     db = sqlite3.connect("wmgzon.db")
-#     cursor = db.cursor()
-
-#     fetch_albums = """SELECT ARTISTS.artist_id, ARTISTS.artist_name, ALBUMS.album_name, albums.artwork FROM ARTISTS
-#                       INNER JOIN ALBUMS ON ARTISTS.artist_id=ALBUMS.fk_artist_id"""
-
-#     cursor.execute(fetch_albums)
-#     products = cursor.fetchall()
-    
-#     db.close()
-
-#     return products
-
-def get_user_details(user, password):
-    with sqlite3.connect("wmgzon.db") as db:
-        cursor = db.cursor()
-        fetch_user = """SELECT * FROM USERS WHERE user_name = ? AND password = ?"""
-
-        cursor.execute(fetch_user, [user, password])
-        user = cursor.fetchone()
-
-    return user
-
 @app.route('/')
 def index():
-    # albums = db.session.query(db.select(Albums)).all()
-    albums = Albums.query.all()
-    print(albums)
+    albums = db.session.query(Albums).join(artist_album).all()
+
     return render_template('index.html', products=albums)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -187,27 +161,29 @@ def login():
 def logout():
     logout_user()
     flash("You have logged out successfully")
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
+
+
 
 @app.route('/admin', methods=['GET'])
+@login_required
 def admin():
-    users = Users.query.all()
-    albums = Albums.query.all()
+    users = db.session.query(Users).all()
+    print(users)
+    albums = db.session.query(Albums).all()
     return render_template('admin.html', users=users, albums=albums)
+
+@app.route('/admin/add', methods=['GET', 'POST'])
+# @login_required
+def add_album():
+    add_album_form = AdminAlbumForm()
+
+    add_album_form.artist_name.choices = [(artist.artist_id, artist.name) for artist in db.session.query(Artists).all()]
+    return render_template('albumDatabaseForm.html', form=add_album_form)
 
 @app.route('/music/<int:album_id>') # type: ignore
 def get_product_page(album_id: int):
-    db = sqlite3.connect("wmgzon.db")
-    cursor = db.cursor()
-
-    album_fetch = """SELECT ARTISTS.artist_id, ARTISTS.artist_name, ALBUMS.album_name, albums.artwork, ARTISTS.bio
-                     FROM ARTISTS
-                     INNER JOIN ALBUMS ON ARTISTS.artist_id=ALBUMS.fk_artist_id
-                     WHERE album_id = ?"""
-
-    cursor.execute(album_fetch, (album_id,))
-    album = cursor.fetchone()
-    db.close()
+    album = db.session.query(Albums).join(artist_album).filter(Albums.album_id == album_id).first()
 
     if album:
         return render_template('productPage.html', product=album)
@@ -245,7 +221,5 @@ def music():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    
-
 
     app.run(debug=True)

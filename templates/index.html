@@ -26,7 +26,9 @@
         <div class="productCard">
             <img src="static\products_artwork\{{ product.artwork }}" alt="{{ product.name }} album art" style="width: 100px;">
             <alb class="album">{{ product.name }}</alb>
-            <artist class="artist">{{product.artist}}</artist>
+            {% for artist in product.album_artists: %}
+                <artist class="artist">{{ artist.name }}</artist>
+            {% endfor %}
             <a href="{{ url_for('get_product_page', album_id= product.album_id) }}">
                 <button id="productPageButton">Choose Format</button>
             </a>

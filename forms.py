@@ -18,11 +18,25 @@ class RegisterForm(FlaskForm):
 class AdminAlbumForm(FlaskForm):
     album_name = form.StringField(label='Album Name', validators=[InputRequired(message="Input Required")])
     artwork = form.StringField(label='Album Artwork', validators=[InputRequired(message="Input Required")])
-    collection_type = form.RadioField(label='Collection Type', choices=[('LP', 'LP'), ('EP', 'EP'), ('Single', 'Single')], validators=[InputRequired(message="Input Required")])
-    genre = form.SelectField(label='Genre', validators=[InputRequired(message="Input Required")])
+    genre = form.SelectField(label='Genre')
+    new_genre = form.StringField(label='New Genre')
     year = form.IntegerField(label="Release Year", validators=[InputRequired(message="Input Required")])
     artist_name = form.SelectField(label='Artist Name')
     new_artist_name = form.StringField(label='New Artist Name')
-    artist_bio = form.StringField(label='Artist Bio')
-    submit = form.SubmitField("Add")
+    submit = form.SubmitField("Submit")
 
+class AdminArtistForm(FlaskForm):
+    artist_name = form.StringField(label='Artist Name', validators=[InputRequired(message="Input Required")])
+    artist_bio = form.StringField(label='Artist Bio')
+    submit = form.SubmitField("Submit")
+
+class AdminGenreForm(FlaskForm):
+    genre = form.StringField(label='Genre Name', validators=[InputRequired(message="Input Required")])
+    submit = form.SubmitField("Submit")
+
+class ProductForm(FlaskForm):
+    name = form.StringField(label='Name')
+    image = form.StringField(label='Image File (include file format)')
+    price = form.DecimalField(label='Price', places=2)
+    type = form.StringField(label='Type') 
+    submit = form.SubmitField("Submit")

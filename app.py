@@ -2,8 +2,9 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
 from flask_bcrypt import Bcrypt
+from wtforms_sqlalchemy.orm import model_form
 from datetime import datetime
-from forms import LoginForm, RegisterForm, AdminAlbumForm
+from forms import LoginForm, RegisterForm, ProductForm
 import secrets
 
 
@@ -40,72 +41,22 @@ class Users(db.Model, UserMixin):
 
     def get_id(self):
            return (self.user_id)
-    
-artist_album = db.Table('ARTISTALBUM',
-                          db.Column('artist_name', db.String, db.ForeignKey('ARTISTS.name')),
-                          db.Column('album_name', db.String, db.ForeignKey('ALBUMS.name'))
-                          )
 
-artist_song = db.Table('ARTISTSONG',
-                          db.Column('artist_name', db.String, db.ForeignKey('ARTISTS.name')),
-                          db.Column('song_name', db.String, db.ForeignKey('SONGS.name'))
-                          )
-
-album_song = db.Table('ALBUMSONG',
-                          db.Column('album_name', db.String, db.ForeignKey('ALBUMS.name'), primary_key=True),
-                          db.Column('song_name', db.String, db.ForeignKey('SONGS.name'), primary_key=True)
-                          )
-
-class Artists(db.Model):
-    __tablename__ = "ARTISTS"
-    artist_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    bio = db.Column(db.String(500))
-    artist_albums = db.relationship('Albums', secondary=artist_album, back_populates='album_artists')
-    artist_songs = db.relationship('Songs', secondary=artist_song, back_populates='song_artists')
-
-class Albums(db.Model):
-   __tablename__ = "ALBUMS"
-   album_id = db.Column(db.Integer, primary_key=True)
-   name = db.Column(db.String(100), nullable=False)
-   artwork = db.Column(db.String(100), nullable=False)
-   genre = db.Column(db.String(25))
-   year = db.Column(db.Integer, nullable=False)
-   album_artists = db.relationship('Artists', secondary=artist_album, back_populates='artist_albums')
-   album_songs = db.relationship('Songs', secondary=album_song, back_populates='song_albums')
-
-class Songs(db.Model):
-   __tablename__ = "SONGS"
-   song_id = db.Column(db.Integer, primary_key=True)
-   name = db.Column(db.String(100), nullable=False)
-   length = db.Column(db.Integer, nullable=False)
-   song_artists = db.relationship('Artists', secondary=artist_song, back_populates='artist_songs')
-   song_albums = db.relationship('Albums', secondary=album_song, back_populates='album_songs')
-#    fk_album_id = db.Column(db.Integer, db.ForeignKey("ALBUMS.album_id"), nullable=False)
-
-class Format(db.Model):
-    __tablename__ = "FORMATS"
-    format_id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(50), nullable=False)
+class Products(db.Model):
+    __tablename__ = "PRODUCTS"
+    product_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    image = db.Column(db.String, nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.String, nullable=False)
+    
 
-class Order(db.Model):
-    __tablename__ = "ORDERS"
-    order_id = db.Column(db.Integer, primary_key=True)
-    fk_user_id = db.Column(db.Integer, db.ForeignKey("USERS.user_id"), nullable=False)
-    order_date = db.Column(db.DateTime, default=datetime.utcnow)
 
-class OrderItem(db.Model):
-    __tablename__ = "ORDERITEMS"
-    orderitem_id = db.Column(db.Integer, primary_key=True)
-    fk_order_id = db.Column(db.Integer, db.ForeignKey("ORDERS.order_id"), nullable=False)
-    fk_album_id = db.Column(db.Integer, db.ForeignKey("ALBUMS.album_id"), nullable=False)
-    fk_format_id = db.Column(db.Integer, db.ForeignKey("FORMATS.format_id"), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+
 
 @app.route('/')
 def index():
-    albums = db.session.query(Albums).join(artist_album).all()
+    albums = db.session.query(Products).all()
 
     return render_template('index.html', products=albums)
 
@@ -115,8 +66,7 @@ def register():
     if register_form.validate_on_submit():
         user = Users.query.filter_by(email=request.form['email']).first()
         if user is None:
-            username = request.form['username']
-            user = Users(username=username,
+            user = Users(username=request.form['username'],
                          password=bcrypt.generate_password_hash(request.form['password']),
                          email=request.form['email']) # type: ignore
             db.session.add(user)
@@ -135,7 +85,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST']) 
 def login():
     login_form = LoginForm()
-    if request.method == 'POST' and login_form.validate_on_submit():
+    if login_form.validate_on_submit():
         print(f"Form Valid: {login_form.validate_on_submit()}")
         user = Users.query.filter_by(username=request.form['username']).first()
         if user:
@@ -165,28 +115,61 @@ def logout():
 
 
 
-@app.route('/admin', methods=['GET'])
+@app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
     users = db.session.query(Users).all()
-    print(users)
-    albums = db.session.query(Albums).all()
-    return render_template('admin.html', users=users, albums=albums)
+    products = db.session.query(Products).all()
+    return render_template('admin.html', users=users, products=products)
 
-@app.route('/admin/add', methods=['GET', 'POST'])
-# @login_required
-def add_album():
-    add_album_form = AdminAlbumForm()
+@app.route('/admin/<int:product_id>', methods=['GET', 'POST'])
+@login_required
+def edit_product(product_id: int):
+    users = db.session.query(Users).all()
+    products = db.session.query(Products).all()
+    product_edit = db.session.query(Products).filter_by(product_id=product_id).first()
+    form = ProductForm()
+    form.name.data = product_edit.name
+    form.image.data = product_edit.image
+    form.price.data = product_edit.price
+    form.type.data = product_edit.type
 
-    add_album_form.artist_name.choices = [(artist.artist_id, artist.name) for artist in db.session.query(Artists).all()]
-    return render_template('albumDatabaseForm.html', form=add_album_form)
+    if form.validate_on_submit():
+        print("VALID")
+        db.session.query(Products).filter(Products.product_id == product_edit.product_id).update({Products.name:request.form['name'],
+                                                                                                  Products.image:request.form['image'],
+                                                                                                  Products.price:request.form['price'],
+                                                                                                  Products.type:request.form['type']})
+        db.session.commit()
+        return redirect(url_for('admin'))
+    else:
+        print("INVALID")
+        return render_template('admin.html', users=users, products=products, product_id=product_id, form=form)
 
-@app.route('/music/<int:album_id>') # type: ignore
-def get_product_page(album_id: int):
-    album = db.session.query(Albums).join(artist_album).filter(Albums.album_id == album_id).first()
+@app.route('/admin/add/product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+    form = ProductForm()
 
-    if album:
-        return render_template('productPage.html', product=album)
+    if form.validate_on_submit():
+        product = Products(name=request.form['name'],
+                            image=request.form['image'],
+                            price=request.form['price'],
+                            type=request.form['type']) # type: ignore
+        db.session.add(product)
+        db.session.commit()
+        return redirect(url_for('admin'))
+    else:
+        print("INVALID")
+    return render_template('productForm.html', form=form)
+
+
+
+@app.route('/music/<int:product_id>')
+def get_product_page(product_id: int):
+    product = db.session.query(Products).filter(Products.product_id == product_id).first()
+    if product:
+        return render_template('product_page/music.html', product=product)
     else:
         return 'Product not found', 404
 

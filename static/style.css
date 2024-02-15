@@ -47,10 +47,6 @@ a:hover {
     color: #2BC9DE;
 }
 
-a:active {
-    color: #2BC9DE;
-}
-
 
 .trendingProducts {
     display: flex;

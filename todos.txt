@@ -1,8 +1,0 @@
-To DOS:
-
-- merge the 2 databases
-- integrate sqlalchemy to make code easier to read
-- use login_manager to set up login page (could be used within register maybe to?)
-
-
-- flask login https://flask-login.readthedocs.io/en/latest/

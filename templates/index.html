@@ -1,6 +1,18 @@
 {% extends "layout/layoutMain.html" %}
 {% block head %}
   {{ super() }}
+  <script>
+    function sortProductSection(criteria, direction) {
+        var productList, switching, shouldSwitch;
+
+        productList = document.getElementById('productBar');
+        switching = true;
+        while(switching) {
+            switching = false;
+            b
+        }
+    }
+  </script>
 {% endblock %}
 {% block header %}
   {{ super() }}
@@ -21,18 +33,24 @@
 </div>
 
 <div class="productSection">
-    <div class="productList">
+    <div id="filters">
+        <sort style="padding-left:25px; margin-top: 5px; width: 100%;">Sort:</sort>
+        <select id="sortOptions">
+            <option value="newest">Release Year: Newest to Oldest</option>
+            <option value="oldest">Release Year: Oldest to Newest</option>
+        </select>
+    </div>
+    
+    <div id="productList" class="productList">
         {% for product in products: %}
-        <div class="productCard">
-            <img src="static\products_artwork\{{ product.artwork }}" alt="{{ product.name }} album art" style="width: 100px;">
-            <alb class="album">{{ product.name }}</alb>
-            {% for artist in product.album_artists: %}
-                <artist class="artist">{{ artist.name }}</artist>
-            {% endfor %}
-            <a href="{{ url_for('get_product_page', album_id= product.album_id) }}">
-                <button id="productPageButton">Choose Format</button>
-            </a>
-        </div>
+        <a href="{{ url_for('get_product_page', product_id=product.product_id) }}">
+            <div id="{{ product.product_id }}" class="productCard">
+                <img src="static\products_artwork\{{ product.image }}" alt="{{ product.name }} album art" style="width: 100px;">
+                
+                    <alb class="album">{{ product.name }}</alb>
+                <prc>£{{ product.price }}</prc>
+            </div>
+        </a>
         {% endfor %}
     </div>
     

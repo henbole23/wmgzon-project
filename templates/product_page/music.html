@@ -47,13 +47,10 @@
     </div>
 
     <div>
-        <img src="../static/products_artwork/{{ product.artwork }}" alt="artwork" style="width: 525px">
+        <img src="../static/products_artwork/{{ product.image }}" alt="artwork" style="width: 525px">
     </div>
     <div>
         <p>{{ product.name }}</p>
-        {% for artist in product.album_artists: %}
-        <p>{{ artist.name  }}</p>
-        {% endfor %}
         <table class="fixed_header">
             <thead>
               <tr>
@@ -127,11 +124,6 @@
         </div>
         <p>£9.99</p>
         <button>Add to Basket</button>
-    </div>
-
-    <div>
-        <p>Artist Bio</p>
-        <p>{{ product.album_artists[0].bio }}</p>
     </div>
     <div>
         <p>Customer Rating</p>

@@ -2,12 +2,9 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
 from flask_bcrypt import Bcrypt
-from wtforms_sqlalchemy.orm import model_form
 from datetime import datetime
 from forms import LoginForm, RegisterForm, ProductForm
 import secrets
-
-
 
 # Create Flask Instance
 app = Flask(__name__)
@@ -49,16 +46,51 @@ class Products(db.Model):
     image = db.Column(db.String, nullable=False)
     price = db.Column(db.Integer, nullable=False)
     type = db.Column(db.String, nullable=False)
-    
-
-
-
 
 @app.route('/')
 def index():
-    albums = db.session.query(Products).all()
+    products = db.session.query(Products).all()
 
-    return render_template('index.html', products=albums)
+    return render_template('index.html', products=products)
+
+@app.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    products = db.session.query(Products).all()
+    form=ProductForm()
+    if form.validate_on_submit():
+        if 'product_id' in request.form:
+            product = db.session.query(Products).get(request.form['product_id'])
+            product.name = request.form['name']
+            product.image = request.form['image']
+            product.price = request.form['price']
+            product.type = request.form['type']
+
+            db.session.commit()
+            flash("Product Edited Successfully")
+            return redirect(url_for('admin'))
+        else:
+            product = Products(name=request.form['name'],
+                                image=request.form['image'],
+                                price=request.form['price'],
+                                type=request.form['type']) # type: ignore
+            db.session.add(product)
+            db.session.commit()
+            flash("Product Added Successfully")
+            return redirect(url_for('admin'))
+    return render_template('admin.html', products=products, form=form)
+
+
+@app.route('/delete/<id>', methods=['GET', 'POST'])
+@login_required
+def delete_product(id):
+    product = db.session.query(Products).get(id)
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product Deleted Successfully")
+
+    return redirect(url_for('admin'))
+    
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -93,7 +125,6 @@ def login():
             if bcrypt.check_password_hash(user.password, request.form['password']):
                 print("Password Valid")
                 login_user(user)
-                flash("Login Successful")
                 if user.type == "Admin":
                     return redirect(url_for('admin'))
                 else:
@@ -113,93 +144,46 @@ def logout():
     flash("You have logged out successfully")
     return redirect(url_for('index'))
 
-
-
-@app.route('/admin', methods=['GET', 'POST'])
-@login_required
-def admin():
-    users = db.session.query(Users).all()
-    products = db.session.query(Products).all()
-    return render_template('admin.html', users=users, products=products)
-
-@app.route('/admin/<int:product_id>', methods=['GET', 'POST'])
-@login_required
-def edit_product(product_id: int):
-    users = db.session.query(Users).all()
-    products = db.session.query(Products).all()
-    product_edit = db.session.query(Products).filter_by(product_id=product_id).first()
-    form = ProductForm()
-    form.name.data = product_edit.name
-    form.image.data = product_edit.image
-    form.price.data = product_edit.price
-    form.type.data = product_edit.type
-
-    if form.validate_on_submit():
-        print("VALID")
-        db.session.query(Products).filter(Products.product_id == product_edit.product_id).update({Products.name:request.form['name'],
-                                                                                                  Products.image:request.form['image'],
-                                                                                                  Products.price:request.form['price'],
-                                                                                                  Products.type:request.form['type']})
-        db.session.commit()
-        return redirect(url_for('admin'))
-    else:
-        print("INVALID")
-        return render_template('admin.html', users=users, products=products, product_id=product_id, form=form)
-
-@app.route('/admin/add/product', methods=['GET', 'POST'])
-@login_required
-def add_product():
-    form = ProductForm()
-
-    if form.validate_on_submit():
-        product = Products(name=request.form['name'],
-                            image=request.form['image'],
-                            price=request.form['price'],
-                            type=request.form['type']) # type: ignore
-        db.session.add(product)
-        db.session.commit()
-        return redirect(url_for('admin'))
-    else:
-        print("INVALID")
-    return render_template('productForm.html', form=form)
-
-
-
 @app.route('/music/<int:product_id>')
 def get_product_page(product_id: int):
     product = db.session.query(Products).filter(Products.product_id == product_id).first()
     if product:
-        return render_template('product_page/music.html', product=product)
+        return render_template('productPage.html', product=product)
     else:
         return 'Product not found', 404
 
 @app.route('/basket')
 def basket():
-    return render_template('index.html')
+    return render_template('basket.html')
 
-@app.route('/carparts')
-def car_parts():
-    return render_template('comingSoon.html', page_name="Car Parts")
+
 
 @app.route('/animals')
 def animals():
-    return render_template('comingSoon.html', page_name="Animals")
-
-@app.route('/sports')
-def sports():
-    return render_template('comingSoon.html', page_name="Sports")
+    return render_template('categoryPage.html', page_name="Animals")
 
 @app.route('/books')
 def books():
-    return render_template('comingSoon.html', page_name="Books")
+    return render_template('categoryPage.html', page_name="Books")
 
-@app.route('/phones')
-def phones():
-    return render_template('comingSoon.html', page_name="Phones")
+@app.route('/carparts')
+def car_parts():
+    return render_template('categoryPage.html', page_name="Car Parts")
 
 @app.route('/music')
 def music():
-    return render_template('comingSoon.html', page_name="Music")
+    products = db.session.query(Products).filter_by(type="music")
+    return render_template('categoryPage.html', page_name="Music", products=products)
+
+@app.route('/phones')
+def phones():
+    return render_template('categoryPage.html', page_name="Phones")
+
+@app.route('/sports')
+def sports():
+    return render_template('categoryPage.html', page_name="Sports")
+
+
 
 if __name__ == '__main__':
     with app.app_context():

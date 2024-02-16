@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% include 'headers/productHeader.html' %}
+{% block body %}
+<script>
+    function addItemToBasket(id, quantity) {
+        if (!localStorage.getItem('basket')) {
+            let basket = [];
+            localStorage.setItem('basket', JSON.stringify(basket));
+        }
+
+        let basket = JSON.parse(localStorage.getItem("basket"));
+        let existingProductIndex = basket.findIndex(item => item.product_id === id)
+
+        if (existingProductIndex !== -1) {
+            basket[existingProductIndex].quantity += quantity;
+        } else {
+            basket.push({ product_id: id, quantity: quantity })
+        }
+
+        localStorage.setItem('basket', JSON.stringify(basket));
+    }
+</script>
+<div>
+    <img src="../static/products_artwork/{{ product.image }}" alt="artwork" style="width: 525px">
+</div>
+<div>
+    <p>{{ product.name }}</p>
+    
+<div>
+    <p>£9.99</p>
+    <button class="btn btn-primary" onclick="addItemToBasket('{{ product.product_id }}', 1)">Add to Basket</button>
+</div>
+
+{% endblock %}

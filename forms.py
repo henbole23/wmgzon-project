@@ -35,6 +35,7 @@ class AdminGenreForm(FlaskForm):
     submit = form.SubmitField("Submit")
 
 class ProductForm(FlaskForm):
+    product_id = form.IntegerField(label='ID')
     name = form.StringField(label='Name')
     image = form.StringField(label='Image File (include file format)')
     price = form.DecimalField(label='Price', places=2)

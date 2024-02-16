@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 {% include 'headers/productHeader.html' %}
+{% block body %}
+<h1>{{ page_name }} Page Coming Soon</h1>
+<script>
+    const currentPath = window.location.pathname;
+    const id = currentPath.substring(1);
 
-{% block content %}
+    const currentPage = document.getElementById(id);
+    currentPage.classList.add("active")
+</script>
+
+
 <div class="trendingProducts" id="productBar">
     <h3 style="padding-left:25px; margin-top: 5px;">Trending Right Now</h3>
     <div class="productBar">
@@ -25,19 +34,24 @@
         </select>
     </div>
     
-    <div id="productList" class="productList">
+    <div class="card-group">
         {% for product in products: %}
-        <a href="{{ url_for('get_product_page', product_id=product.product_id) }}">
-            <div id="{{ product.product_id }}" class="productCard">
-                <img src="static\products_artwork\{{ product.image }}" alt="{{ product.name }} album art" style="width: 100px;">
-                
-                    <alb class="album">{{ product.name }}</alb>
-                <prc>£{{ product.price }}</prc>
-            </div>
-        </a>
+        <div class="col-sm-2">
+            <a href="{{ url_for('get_product_page', product_id=product.product_id) }}">
+                <div class="card" style="width: 18rem;">
+                    <img src="static\products_artwork\{{ product.image }}" alt="{{ product.name }} album art">
+                    <div class="card-body">
+                        <p class="card-text">{{ product.name }}</p>
+                        <p class="card-text">{{ product.price }}</prc>
+                    </div>
+                </div>
+            </a>
+        </div>
         {% endfor %}
     </div>
     
+    
 </div>
+
 {% endblock %}
 

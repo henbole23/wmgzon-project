@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Wmgzon {% endblock %}
+
+{% block body %}
+<nav class="navbar navbar-dark bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+        <img src="../static/wmgzon_logo.png" alt="wmgzon logo" style="width: 250px;"/>
+        </a>
+        <form class="d-flex justify-content-center">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('basket') }}">Basket</a>
+            </li>
+        {% if current_user.is_authenticated %}
+            <a class="nav-link" style="text-transform: capitalize">{{ current_user.username }}'s Account</a>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </li>
+            
+        {% else %}
+            <li class="nav-item justif-content-end">
+                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            </li>
+            <li class="nav-item justif-content-end">
+                <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+            </li>
+             
+        {% endif %}
+        </ul>
+
+    </div>
+</nav>
+<ul class="nav nav-pills justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link" id="animals" aria-current="page" href="/animals">Animals</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="books" aria-current="page" href="/books">Books</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="carparts" aria-current="page" href="/carparts">Car Parts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="music" aria-current="page" href="/music">Music</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="phones" aria-current="page" href="/phones">Phones</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="sports" aria-current="page" href="/sports">Sports</a>
+    </li>
+</ul>
+
+{% endblock %}

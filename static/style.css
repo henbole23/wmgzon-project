@@ -114,11 +114,11 @@ a:hover {
     overflow: auto;
 }
 
-.fixed_header{
+/* .fixed_header{
     width: 800px;
     table-layout: fixed;
     border-collapse: collapse;
-}
+} */
 
 .fixed_header tbody{
   display:block;
@@ -139,5 +139,5 @@ a:hover {
 .fixed_header th, .fixed_header td {
   padding: 5px;
   text-align: left;
-  width: 200px;
+  width: 150px;
 }

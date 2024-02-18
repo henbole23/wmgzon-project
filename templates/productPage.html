@@ -1,25 +1,6 @@
 {% extends 'base.html' %}
 {% include 'headers/productHeader.html' %}
 {% block body %}
-<script>
-    function addItemToBasket(id, quantity) {
-        if (!localStorage.getItem('basket')) {
-            let basket = [];
-            localStorage.setItem('basket', JSON.stringify(basket));
-        }
-
-        let basket = JSON.parse(localStorage.getItem("basket"));
-        let existingProductIndex = basket.findIndex(item => item.product_id === id)
-
-        if (existingProductIndex !== -1) {
-            basket[existingProductIndex].quantity += quantity;
-        } else {
-            basket.push({ product_id: id, quantity: quantity })
-        }
-
-        localStorage.setItem('basket', JSON.stringify(basket));
-    }
-</script>
 <div>
     <img src="../static/products_artwork/{{ product.image }}" alt="artwork" style="width: 525px">
 </div>
@@ -27,8 +8,17 @@
     <p>{{ product.name }}</p>
     
 <div>
-    <p>£9.99</p>
-    <button class="btn btn-primary" onclick="addItemToBasket('{{ product.product_id }}', 1)">Add to Basket</button>
+    <p>{{ product.price }}</p>
+    <form action="/add_to_basket" method="POST">
+        <input type="hidden" name="product_id" value="{{ product.product_id }}">
+        <label for="quantity">Quantity:</label>
+        <select name="quantity">
+            {% for quantity in range(1, 6) %}
+                <option value="{{ quantity }}">{{ quantity }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" type="submit">Add to Basket</button>
+    </form>
 </div>
 
 {% endblock %}

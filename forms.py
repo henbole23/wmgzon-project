@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 import wtforms as form
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, DataRequired, Length
 
 
 class LoginForm(FlaskForm):
@@ -10,7 +10,7 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    email = form.StringField(label='Email Address', validators=[InputRequired(message="Input Required")])
+    email = form.EmailField(label='Email Address', validators=[InputRequired(message="Input Required")])
     username = form.StringField(label='username', validators=[InputRequired(message="Input Required")])
     password = form.PasswordField(label='Password', validators=[InputRequired(message="Input Required")])
     submit = form.SubmitField("Register")
@@ -41,3 +41,21 @@ class ProductForm(FlaskForm):
     price = form.DecimalField(label='Price', places=2)
     type = form.StringField(label='Type') 
     submit = form.SubmitField("Submit")
+
+class AddressForm(FlaskForm):
+    house_number = form.IntegerField(label='House/Flat Number')
+    street = form.StringField(label='Street')
+    city = form.StringField(label='City/Town')
+    county = form.StringField(label='County')
+    post_code = form.StringField(label='Pos Code')
+
+class PaymentForm(FlaskForm):
+    card_number = form.StringField('Card Number', validators=[DataRequired(), Length(min=16, max=16)])
+    expiration_month = form.SelectField('Expiration Month', choices=[(str(i), str(i)) for i in range(1, 13)], coerce=int, validators=[DataRequired()])
+    expiration_year = form.SelectField('Expiration Year', choices=[(str(i), str(i)) for i in range(2022, 2030)], coerce=int, validators=[DataRequired()])
+    cvv = form.StringField('CVV', validators=[DataRequired(), Length(min=3, max=4)])
+
+class CheckoutForm(AddressForm, PaymentForm):
+    email = form.EmailField(label='Order Email')
+    submit = form.SubmitField(label='Submit Order')
+    

@@ -15,20 +15,38 @@
         </form>
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('basket') }}">Basket</a>
+                <a class="nav-link" href="{{ url_for('basket') }}">
+                    <button type="button" class="btn btn-primary position-relative">
+                        Basket
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                        id="basketCounter" style="display: none;"></span>
+                    </button>
+                </a>
             </li>
         {% if current_user.is_authenticated %}
             <a class="nav-link" style="text-transform: capitalize">{{ current_user.username }}'s Account</a>
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <button type="button" class="btn btn-primary position-relative">
+                        Logout
+                    </button>
+                </a>
             </li>
             
         {% else %}
             <li class="nav-item justif-content-end">
-                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                <a class="nav-link" href="{{ url_for('login') }}">
+                    <button type="button" class="btn btn-primary position-relative">
+                        Login
+                    </button>
+                </a>
             </li>
             <li class="nav-item justif-content-end">
-                <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                <a class="nav-link" href="{{ url_for('register') }}">
+                    <button type="button" class="btn btn-primary position-relative">
+                        Register
+                    </button>
+                </a>
             </li>
              
         {% endif %}
@@ -56,5 +74,17 @@
         <a class="nav-link" id="sports" aria-current="page" href="/sports">Sports</a>
     </li>
 </ul>
+
+<script>
+    const basket = JSON.parse(localStorage.getItem('basket'))
+    const numOfItems = basket.length
+
+    if (numOfItems > 0) {
+        const basketCounter = document.getElementById('basketCounter')
+        basketCounter.style.display = "block"
+        basketCounter.innerHTML = numOfItems
+
+    }
+</script>
 
 {% endblock %}

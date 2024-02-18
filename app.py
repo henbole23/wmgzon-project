@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
 from flask_bcrypt import Bcrypt
-from datetime import datetime
-from forms import LoginForm, RegisterForm, ProductForm
+from flask_session import Session
+from datetime import datetime, timedelta
+from forms import LoginForm, RegisterForm, ProductForm, CheckoutForm
 import secrets
 
 # Create Flask Instance
@@ -16,6 +17,14 @@ app.config["SECRET_KEY"] = secrets.token_urlsafe(16)
 bcrypt = Bcrypt(app)
 # Initialise the Database
 db = SQLAlchemy(app)
+
+# Initialise Sessions
+app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_TYPE"] = "filesystem"
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+Session(app)
+
+
 
 # Flask_Login Config
 login_manager = LoginManager()
@@ -47,6 +56,12 @@ class Products(db.Model):
     price = db.Column(db.Integer, nullable=False)
     type = db.Column(db.String, nullable=False)
 
+class BasketItems(db.Model):
+    __tablename__ = "BASKETITEMS"
+    item_id = db.Column(db.Integer, primary_key=True)
+    fk_product_id = db.Column(db.Integer, db.ForeignKey("PRODUCTS.product_id"), nullable=False)
+    fk_user_id = db.Column(db.Integer, db.ForeignKey("USERS.user_id"), nullable=False)
+
 @app.route('/')
 def index():
     products = db.session.query(Products).all()
@@ -61,10 +76,10 @@ def admin():
     if form.validate_on_submit():
         if 'product_id' in request.form:
             product = db.session.query(Products).get(request.form['product_id'])
-            product.name = request.form['name']
-            product.image = request.form['image']
-            product.price = request.form['price']
-            product.type = request.form['type']
+            product.name = request.form['name'] # type: ignore
+            product.image = request.form['image'] # type: ignore
+            product.price = request.form['price'] # type: ignore
+            product.type = request.form['type'] # type: ignore
 
             db.session.commit()
             flash("Product Edited Successfully")
@@ -152,11 +167,67 @@ def get_product_page(product_id: int):
     else:
         return 'Product not found', 404
 
+@app.route('/add_to_basket', methods=['POST', 'GET'])
+def add_to_basket():
+    product_id = request.form['product_id']
+    quantity = int(request.form['quantity'])
+    item = {'product_id': product_id, 'quantity': quantity}
+    print(product_id)
+    # Creates basket and adds item if basket not already exist
+    if 'basket' not in session:
+        session['basket'] = [item]
+    else:
+        # Adds product to basket
+        if not any(product_id in product['product_id'] for product in session['basket']):
+            session['basket'].append(item)
+        # Updates quantity of item already in basket
+        else:
+            for product in session['basket']:
+                if product['product_id'] == item['product_id']:
+                    product['quantity'] += quantity
+
+    return redirect(url_for('view_basket'))
+
+@app.route('/remove_from_basket', methods=['POST'])
+def remove_from_basket():
+    product_id = request.form['product_id']
+
+    basket = session.get('basket', [])
+
+    basket = [item for item in basket if item.get('product_id') != product_id]
+    session['basket'] = basket
+    return redirect(url_for('view_basket'))
+
 @app.route('/basket')
-def basket():
-    return render_template('basket.html')
+def view_basket():
+    basket_data = session.get('basket', [])
 
+    basket_ids = [id['product_id'] for id in basket_data if 'product_id' in id]
+    product_data = db.session.query(Products).filter(Products.product_id.in_(basket_ids)).all()
 
+    
+
+    data = zip(product_data, basket_data)
+    print(data)
+    return render_template('basket.html', data=data, data_check=basket_data, total_price=totalPriceCalc(basket_data, product_data))
+
+@app.route('/checkout')
+def checkout():
+    form = CheckoutForm()
+    return render_template('checkout.html', form=form)
+
+def totalPriceCalc(basket_data, product_data):
+    total = 0
+
+    for product in basket_data:
+        id = int(product['product_id'])
+        quantity = product['quantity']
+
+        for product_item in product_data:
+            if product_item.product_id == id:
+                total += product_item.price * quantity
+
+    return round(total, 2)
 
 @app.route('/animals')
 def animals():

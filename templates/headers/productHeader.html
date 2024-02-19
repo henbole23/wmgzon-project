@@ -15,8 +15,8 @@
         </form>
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('basket') }}">
-                    <button type="button" class="btn btn-primary position-relative">
+                <a class="nav-link" href="{{ url_for('view_basket') }}">
+                    <button type="button" class="btn btn-outline-primary position-relative">
                         Basket
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
                         id="basketCounter" style="display: none;"></span>
@@ -24,10 +24,14 @@
                 </a>
             </li>
         {% if current_user.is_authenticated %}
-            <a class="nav-link" style="text-transform: capitalize">{{ current_user.username }}'s Account</a>
+            <a class="nav-link" href="{{ url_for('account') }}">
+                <button type="button" class="btn btn-outline-primary position-relative" style="text-transform: capitalize">
+                    {{ current_user.username }}'s Account
+                </button>
+            </a>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('logout') }}">
-                    <button type="button" class="btn btn-primary position-relative">
+                    <button type="button" class="btn btn-outline-primary position-relative">
                         Logout
                     </button>
                 </a>
@@ -75,16 +79,15 @@
     </li>
 </ul>
 
-<script>
-    const basket = JSON.parse(localStorage.getItem('basket'))
-    const numOfItems = basket.length
-
-    if (numOfItems > 0) {
-        const basketCounter = document.getElementById('basketCounter')
-        basketCounter.style.display = "block"
-        basketCounter.innerHTML = numOfItems
-
-    }
-</script>
-
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissable" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+                
 {% endblock %}

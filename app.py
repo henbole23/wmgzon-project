@@ -1,8 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from flask_session import Session
+from sqlalchemy import ForeignKey
 from datetime import datetime, timedelta
 from forms import LoginForm, RegisterForm, ProductForm, CheckoutForm
 import secrets
@@ -11,12 +12,9 @@ import secrets
 app = Flask(__name__)
 # Add Database
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///wmgzon.db"
-
+# Sets secret key for various authentication such as forms
 app.config["SECRET_KEY"] = secrets.token_urlsafe(16)
 
-bcrypt = Bcrypt(app)
-# Initialise the Database
-db = SQLAlchemy(app)
 
 # Initialise Sessions
 app.config["SESSION_PERMANENT"] = True
@@ -25,11 +23,16 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 Session(app)
 
 
+# Initialise bcrypt encyption for passwords
+bcrypt = Bcrypt(app)
+# Initialise the Database
+db = SQLAlchemy(app)
+
+
 
 # Flask_Login Config
 login_manager = LoginManager()
 login_manager.init_app(app)
-# login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -37,7 +40,7 @@ def load_user(user_id):
 
 # Create User Model
 class Users(db.Model, UserMixin):
-    __tablename__ = "USERS"
+    __tablename__ = "users"
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
@@ -45,28 +48,43 @@ class Users(db.Model, UserMixin):
     type = db.Column(db.String(25), default="Customer", nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    orders = db.relationship('Orders', back_populates='users')
+
     def get_id(self):
-           return (self.user_id)
+        return self.user_id
 
 class Products(db.Model):
-    __tablename__ = "PRODUCTS"
+    __tablename__ = "products"
     product_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     image = db.Column(db.String, nullable=False)
     price = db.Column(db.Integer, nullable=False)
     type = db.Column(db.String, nullable=False)
 
-class BasketItems(db.Model):
-    __tablename__ = "BASKETITEMS"
+    order_items = db.relationship('OrderItems', back_populates='products')
+
+class Orders(db.Model):
+    __tablename__ = "orders"
+    order_id = db.Column(db.Integer, primary_key=True)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    fk_user_id = db.Column(db.Integer, ForeignKey('users.user_id'))
+
+    users = db.relationship('Users', back_populates='orders')
+    items = db.relationship('OrderItems', back_populates='orders')
+
+class OrderItems(db.Model):
+    __tablename__ = "orderitems"
     item_id = db.Column(db.Integer, primary_key=True)
-    fk_product_id = db.Column(db.Integer, db.ForeignKey("PRODUCTS.product_id"), nullable=False)
-    fk_user_id = db.Column(db.Integer, db.ForeignKey("USERS.user_id"), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    fk_order_id = db.Column(db.Integer, ForeignKey('orders.order_id'))
+    fk_product_id = db.Column(db.Integer, ForeignKey('products.product_id'))
+
+    orders = db.relationship('Orders', back_populates='items')
+    products = db.relationship('Products', back_populates='order_items')
 
 @app.route('/')
 def index():
-    products = db.session.query(Products).all()
-
-    return render_template('index.html', products=products)
+    return render_template('index.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
@@ -105,7 +123,10 @@ def delete_product(id):
     flash("Product Deleted Successfully")
 
     return redirect(url_for('admin'))
-    
+
+@app.route('/account')
+def account():
+    return render_template('account.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -118,15 +139,11 @@ def register():
                          email=request.form['email']) # type: ignore
             db.session.add(user)
             db.session.commit()
-
+            login_user(user)
             return redirect(url_for('index'))
     
     print(f"FORM VALID: {register_form.validate_on_submit()}")
     return render_template('register.html', form=register_form)
-    # else:
-    #     flash("Field Required")
-    #     print("Empty Fields")
-    #     return render_template('register.html', form=register_form)
 
 
 @app.route('/login', methods=['GET', 'POST']) 
@@ -151,6 +168,11 @@ def login():
             print("User Invalid")
             flash("User Doesn't Exist")
     return render_template('login.html', form=login_form)
+
+@login_manager.unauthorized_handler
+def unauthorised_user():
+    flash('Please Log In First')
+    return redirect(url_for('login'))
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -205,15 +227,37 @@ def view_basket():
     basket_ids = [id['product_id'] for id in basket_data if 'product_id' in id]
     product_data = db.session.query(Products).filter(Products.product_id.in_(basket_ids)).all()
 
-    
-
     data = zip(product_data, basket_data)
     print(data)
     return render_template('basket.html', data=data, data_check=basket_data, total_price=totalPriceCalc(basket_data, product_data))
 
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET', 'POST'])
+@login_required
 def checkout():
     form = CheckoutForm()
+
+    # if form.validate_on_submit():
+    if request.method == 'POST':
+        basket_data = session.get('basket', [])
+        order = Orders(fk_user_id=current_user.user_id) # type: ignore
+        db.session.add(order)
+        db.session.commit()
+        
+        for data in basket_data:
+            order_items = OrderItems(quantity=data['quantity'], fk_order_id=order.order_id, fk_product_id=data['product_id']) # type: ignore 
+            db.session.add(order_items)
+        
+        db.session.commit()
+        del session['basket']
+        flash(f"Order {order.order_id} Submitted Successfully")
+        return render_template('index.html', show_modal=True)
+
+    else:
+        print(form.errors)
+        
+
+
+
     return render_template('checkout.html', form=form)
 
 def totalPriceCalc(basket_data, product_data):

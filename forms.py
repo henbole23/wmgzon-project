@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 import wtforms as form
 from wtforms.validators import InputRequired, DataRequired, Length
-
+import datetime
 
 class LoginForm(FlaskForm):
     username = form.StringField(label='username', validators=[InputRequired(message="Input Required")])
@@ -47,15 +47,15 @@ class AddressForm(FlaskForm):
     street = form.StringField(label='Street')
     city = form.StringField(label='City/Town')
     county = form.StringField(label='County')
-    post_code = form.StringField(label='Pos Code')
+    post_code = form.StringField(label='Post Code')
 
 class PaymentForm(FlaskForm):
     card_number = form.StringField('Card Number', validators=[DataRequired(), Length(min=16, max=16)])
-    expiration_month = form.SelectField('Expiration Month', choices=[(str(i), str(i)) for i in range(1, 13)], coerce=int, validators=[DataRequired()])
-    expiration_year = form.SelectField('Expiration Year', choices=[(str(i), str(i)) for i in range(2022, 2030)], coerce=int, validators=[DataRequired()])
+    expiration_month = form.SelectField('Expiration Date', choices=[(str(i), str(i)) for i in range(1, 13)], coerce=int, validators=[DataRequired()])
+    expiration_year = form.SelectField('Expiration Date', choices=[(str(i), str(i)) for i in range(datetime.datetime.now().year, (datetime.datetime.now().year) + 10)], coerce=int, validators=[DataRequired()])
     cvv = form.StringField('CVV', validators=[DataRequired(), Length(min=3, max=4)])
 
 class CheckoutForm(AddressForm, PaymentForm):
-    email = form.EmailField(label='Order Email')
+    email = form.EmailField(label='Email')
     submit = form.SubmitField(label='Submit Order')
     

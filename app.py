@@ -3,9 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from flask_session import Session
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, desc
 from datetime import datetime, timedelta
-from forms import LoginForm, RegisterForm, ProductForm, CheckoutForm
+from forms import LoginForm, RegisterForm, ProductForm, CheckoutForm, AdminAlbumForm
 import secrets
 
 # Create Flask Instance
@@ -60,8 +60,16 @@ class Products(db.Model):
     image = db.Column(db.String, nullable=False)
     price = db.Column(db.Integer, nullable=False)
     type = db.Column(db.String, nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     order_items = db.relationship('OrderItems', back_populates='products')
+
+class Albums(db.Model):
+   __tablename__ = "albums"
+   album_id = db.Column(db.Integer, primary_key=True)
+   name = db.Column(db.String(100), nullable=False)
+   year = db.Column(db.Integer, nullable=False)
+   fk_product_id = db.Column(db.Integer, db.ForeignKey("products.product_id"), nullable=False)
 
 class Orders(db.Model):
     __tablename__ = "orders"
@@ -70,7 +78,7 @@ class Orders(db.Model):
     fk_user_id = db.Column(db.Integer, ForeignKey('users.user_id'))
 
     users = db.relationship('Users', back_populates='orders')
-    items = db.relationship('OrderItems', back_populates='orders')
+    items = db.relationship('OrderItems', back_populates='orders', cascade='all, delete-orphan')
 
 class OrderItems(db.Model):
     __tablename__ = "orderitems"
@@ -89,9 +97,10 @@ def index():
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    products = db.session.query(Products).all()
-    form=ProductForm()
-    if form.validate_on_submit():
+    product_details = db.session.query(Products, Albums).join(Products).filter(Products.type == 'music').all()
+    product_form = ProductForm()
+    details_form = AdminAlbumForm()
+    if product_form.validate_on_submit():
         if 'product_id' in request.form:
             product = db.session.query(Products).get(request.form['product_id'])
             product.name = request.form['name'] # type: ignore
@@ -111,7 +120,7 @@ def admin():
             db.session.commit()
             flash("Product Added Successfully")
             return redirect(url_for('admin'))
-    return render_template('admin.html', products=products, form=form)
+    return render_template('admin.html', products=product_details, form=details_form, product_form=product_form)
 
 
 @app.route('/delete/<id>', methods=['GET', 'POST'])
@@ -285,10 +294,21 @@ def books():
 def car_parts():
     return render_template('categoryPage.html', page_name="Car Parts")
 
-@app.route('/music')
+@app.route('/music', methods=['GET', 'POST'])
 def music():
-    products = db.session.query(Products).filter_by(type="music")
-    return render_template('categoryPage.html', page_name="Music", products=products)
+    products = db.session.query(Products).all()
+
+    if request.method == 'POST':
+        print(request)
+        
+        if request.form['sort'] == 'descend':
+            sorted_data = db.session.query(Products).join(Albums).order_by(desc(Albums.year)).all()
+        else:
+            sorted_data = db.session.query(Products).join(Albums).order_by(Albums.year).all()
+
+        return render_template('categoryPage.html', page_name="music", products=sorted_data)
+    
+    return render_template('categoryPage.html', page_name="music", products=products)
 
 @app.route('/phones')
 def phones():

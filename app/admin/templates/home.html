@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% include 'headers/adminHeader.html' %}
+{% include 'adminHeader.html' %}
 
 {% block title %} Home {% endblock %}
 
@@ -33,54 +33,19 @@
                         <th>Image</th>
                         <th>Price</th>
                         <th>Type</th>
-                        <th>Product Details</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
-                    {% for product, album in products: %}
+                    {% for product in products: %}
                     <tr>
                         <td>{{ product.product_id }}</td>
                         <td>{{ product.name }}</td>
                         <td>{{ product.image }}</td>
                         <td>£{{ product.price }}</td>
                         <td>{{ product.type }}</td>
-                        <td><a class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#viewproductmodal{{product.product_id}}">View</a></td>
-                        <td><a class="btn btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#editproductmodal{{product.product_id}}">Edit</a></td>
-                        <td><a href="/delete/{{ product.product_id }}" type="button" class="btn btn-danger btn-xs" onclick="return confirm('Confirm Product {{product.product_id}} Deletion')">Delete</button></td>
+                        <td><a href="/edit/{{ product.product_id }}" class="btn btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#editproductmodal{{product.product_id}}">Edit</a></td>
+                        <td><a href="/delete/{{ product.product_id }}" type="button" class="btn btn-danger btn-xs" onclick="return confirm('Are you Sure?')">Delete</button></td>
                     </tr>
-
-<!-- View Product Details Modal -->
-<div class="modal fade" id="viewproductmodal{{ product.product_id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Product Details</h5>
-      </div>
-      <form id="editDetailsForm" action="" method="POST">
-        {{ product_form.csrf_token }}
-        {{ product_form.hidden_tag() }}
-        <div id="editDetailsModalBody" class="modal-body">
-            <div class="form-group">
-              {{ form.album_id.label }}
-              {{ form.album_id(value=album.album_id, class="form-control", type="number") }}
-            </div>
-            <div class="form-group">
-                {{ form.name.label }}
-                {{ form.name(value=album.name, class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.year.label }}
-                {{ form.year(value=album.year, class="form-control", type="number") }}
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 <!-- Edit Product Modal -->
 <div class="modal fade" id="editproductmodal{{ product.product_id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -90,33 +55,33 @@
           <h5 class="modal-title" id="staticBackdropLabel">Edit Product</h5>
         </div>
         <form action="" method="POST">
-          {{ product_form.csrf_token }}
-          {{ product_form.hidden_tag() }}
+          {{ form.csrf_token }}
+          {{ form.hidden_tag() }}
           <div class="modal-body">
                   <div class="form-group">
-                    {{ product_form.product_id.label }}
-                    {{ product_form.product_id(value=product.product_id, class="form-control", type="number", readonly="true") }}
+                    {{ form.product_id.label }}
+                    {{ form.product_id(value=product.product_id, class="form-control", type="number", readonly="true") }}
                   </div>
                   <div class="form-group">
-                      {{ product_form.name.label }}
-                      {{ product_form.name(class="form-control", value=product.name) }}
+                      {{ form.name.label }}
+                      {{ form.name(class="form-control", value=product.name) }}
                   </div>
                   <div class="form-group">
-                      {{ product_form.image.label }}
-                      {{ product_form.image(class="form-control", value=product.image) }}
+                      {{ form.image.label }}
+                      {{ form.image(class="form-control", value=product.image) }}
                   </div>
                   <div class="form-group">
-                      {{ product_form.price.label }}
-                      {{ product_form.price(class="form-control", type="number", value=product.price) }}
+                      {{ form.price.label }}
+                      {{ form.price(class="form-control", type="number", value=product.price) }}
                   </div>
                   <div class="form-group">
-                      {{ product_form.type.label }}
-                      {{ product_form.type(class="form-control", value=product.type) }}
+                      {{ form.type.label }}
+                      {{ form.type(class="form-control", value=product.type) }}
                   </div>
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              {{ product_form.submit(class="btn btn-primary") }}
+              {{ form.submit(class="btn btn-primary") }}
           </div>
         </form>
       </div>
@@ -140,33 +105,34 @@
         <h5 class="modal-title" id="staticBackdropLabel">Add Product</h5>
       </div>
       <form action="" method="POST">
-        {{ product_form.csrf_token }}
-        {{ product_form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
         <div class="modal-body">
                 <div class="form-group">
-                    <label>{{ product_form.name.label }}</label>
-                    {{ product_form.name(class="form-control") }}
+                    <label>{{ form.name.label }}</label>
+                    {{ form.name(class="form-control") }}
                 </div>
                 <div class="form-group">
-                    <label>{{ product_form.image.label }}</label>
-                    {{ product_form.image(class="form-control") }}
+                    <label>{{ form.image.label }}</label>
+                    {{ form.image(class="form-control") }}
                 </div>
                 <div class="form-group">
-                    <label>{{ product_form.price.label }}</label>
-                    {{ product_form.price(class="form-control", type="number") }}
+                    <label>{{ form.price.label }}</label>
+                    {{ form.price(class="form-control", type="number") }}
                 </div>
                 <div class="form-group">
-                    <label>{{ product_form.type.label }}</label>
-                    {{ product_form.type(class="form-control") }}
+                    <label>{{ form.type.label }}</label>
+                    {{ form.type(class="form-control") }}
                 </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            {{ product_form.submit(class="btn btn-primary") }}
+            {{ form.submit(class="btn btn-primary") }}
         </div>
       </form>
     </div>
   </div>
 </div>
+
 {% endblock %}
 

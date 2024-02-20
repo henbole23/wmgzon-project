@@ -22,16 +22,18 @@
         {% endfor %} -->
     </div>
 </div>
-
 <div class="productSection">
+    {% if page_name == "music" %}
     <div id="filters">
         <sort style="padding-left:25px; margin-top: 5px; width: 100%;">Sort:</sort>
-        <select id="sortOptions">
-            <option value="newest">Release Year: Newest to Oldest</option>
-            <option value="oldest">Release Year: Oldest to Newest</option>
-        </select>
+        <form id="productSortForm" action="/{{ page_name }}" method="POST">
+            <select name="sort" id="sortOptions">
+                <option value="descend">Release Year: Newest to Oldest</option>
+                <option value="ascend">Release Year: Oldest to Newest</option>
+            </select>
+        </form>
     </div>
-    
+    {% endif %}
     <div class="card-group">
         {% for product in products: %}
         <div class="col-md-2">
@@ -53,5 +55,18 @@
 {% else %}
 <h1>{{ page_name }} Page Coming Soon</h1>
 {% endif %}
+<script>
+    let selectedOption = localStorage.getItem("selectedOption");
+    if (selectedOption) {
+        document.getElementById("sortOptions").value = selectedOption
+    }
+
+    document.getElementById("sortOptions").addEventListener("change", function() {
+        localStorage.setItem("selectedOption", this.value)
+
+        document.getElementById("productSortForm").submit()
+        console.log("REQUEST SE+NT")
+    })
+</script>
 {% endblock %}
 

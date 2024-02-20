@@ -16,9 +16,13 @@ class RegisterForm(FlaskForm):
     submit = form.SubmitField("Register")
 
 class AdminAlbumForm(FlaskForm):
-    album_id = form.IntegerField(label='ID')
-    name = form.StringField(label='Album Name', validators=[InputRequired(message="Input Required")])
+    album_name = form.StringField(label='Album Name', validators=[InputRequired(message="Input Required")])
+    artwork = form.StringField(label='Album Artwork', validators=[InputRequired(message="Input Required")])
+    genre = form.SelectField(label='Genre')
+    new_genre = form.StringField(label='New Genre')
     year = form.IntegerField(label="Release Year", validators=[InputRequired(message="Input Required")])
+    artist_name = form.SelectField(label='Artist Name')
+    new_artist_name = form.StringField(label='New Artist Name')
     submit = form.SubmitField("Submit")
 
 class AdminArtistForm(FlaskForm):

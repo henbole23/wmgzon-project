@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% include 'headers/adminHeader.html' %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <script
+    src="https://kit.fontawesome.com/9d1d9a82d2.js"
+    crossorigin="anonymous"></script>
+
+  <title>How to create bootstrap charts using bootstrap 5</title>
+</head>
+<style>
+  .chart-container {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+  }
+</style>
+
+<body>
+  <div class="card chart-container">
+    <canvas id="chart"></canvas>
+  </div>
+
+</body>
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js">
+</script>
+<script>
+      const ctx = document.getElementById("chart").getContext('2d');
+      const chart_labels = {{ popular_labels | tojson }};
+      const chart_values = {{ popular_values | tojson }};
+      const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chart_labels,
+          datasets: [{
+            label: 'Last week',
+            backgroundColor: 'rgba(161, 198, 247, 1)',
+            borderColor: 'rgb(47, 128, 237)',
+            data: chart_values,
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+              }
+            }]
+          }
+        },
+      });
+</script>
+
+</html>
+{% endblock %}

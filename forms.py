@@ -4,39 +4,34 @@ from wtforms.validators import InputRequired, DataRequired, Length
 import datetime
 
 class LoginForm(FlaskForm):
-    username = form.StringField(label='username', validators=[InputRequired(message="Input Required")])
-    password = form.PasswordField(label='Password', validators=[InputRequired(message="Input Required")])
-    submit = form.SubmitField("Log In")
+    username = form.StringField(label='username', validators=[InputRequired(message='Input Required')])
+    password = form.PasswordField(label='Password', validators=[InputRequired(message='Input Required')])
+    submit = form.SubmitField('Log In')
 
 
 class RegisterForm(FlaskForm):
-    email = form.EmailField(label='Email Address', validators=[InputRequired(message="Input Required")])
-    username = form.StringField(label='username', validators=[InputRequired(message="Input Required")])
-    password = form.PasswordField(label='Password', validators=[InputRequired(message="Input Required")])
-    submit = form.SubmitField("Register")
+    email = form.EmailField(label='Email Address', validators=[InputRequired(message='Input Required')])
+    username = form.StringField(label='username', validators=[InputRequired(message='Input Required')])
+    password = form.PasswordField(label='Password', validators=[InputRequired(message='Input Required')])
+    submit = form.SubmitField('Register')
 
-class AdminAlbumForm(FlaskForm):
+class AlbumForm(FlaskForm):
     album_id = form.IntegerField(label='ID')
-    name = form.StringField(label='Album Name', validators=[InputRequired(message="Input Required")])
-    year = form.IntegerField(label="Release Year", validators=[InputRequired(message="Input Required")])
-    submit = form.SubmitField("Submit")
-
-class AdminArtistForm(FlaskForm):
-    artist_name = form.StringField(label='Artist Name', validators=[InputRequired(message="Input Required")])
-    artist_bio = form.StringField(label='Artist Bio')
-    submit = form.SubmitField("Submit")
-
-class AdminGenreForm(FlaskForm):
-    genre = form.StringField(label='Genre Name', validators=[InputRequired(message="Input Required")])
-    submit = form.SubmitField("Submit")
+    album_name = form.StringField(label='Album Name')
+    year = form.IntegerField(label='Release Year')
+    fk_product_id = form.IntegerField(label='Product ID')
+    submit = form.SubmitField('Submit')
 
 class ProductForm(FlaskForm):
     product_id = form.IntegerField(label='ID')
-    name = form.StringField(label='Name')
+    product_name = form.StringField(label='Name')
     image = form.StringField(label='Image File (include file format)')
     price = form.DecimalField(label='Price', places=2)
-    type = form.StringField(label='Type') 
-    submit = form.SubmitField("Submit")
+    type = form.StringField(label='Type')
+    stock = form.IntegerField(label='Stock Count')
+    album_name = form.StringField(label='Album Name')
+    year = form.IntegerField(label='Release Year')
+    submit = form.SubmitField('Submit')
 
 class AddressForm(FlaskForm):
     house_number = form.IntegerField(label='House/Flat Number')
@@ -55,3 +50,6 @@ class CheckoutForm(AddressForm, PaymentForm):
     email = form.EmailField(label='Email')
     submit = form.SubmitField(label='Submit Order')
     
+class SearchForm(FlaskForm):
+    search_field = form.StringField(label='Search Field', validators=[DataRequired()])
+    submit = form.SubmitField(label='Search')

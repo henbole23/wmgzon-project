@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="../static/style.css">
@@ -9,13 +10,13 @@
     <div class=header>
         <div class=topBanner>
             <a href="/">
-                <img src='../static/wmgzon_logo.png' alt="wmgzon logo" style="width: 250px;"/>
+                <img src='../static/wmgzon_logo.png' alt="wmgzon logo" style="width: 250px;" />
             </a>
         </div>
     </div>
     <a href="{{ url_for('register')}}">SIGN UP</a>
-    
-    
+
+
     <div>
         <form class="login form" action="" method="post">
             {{ form.csrf_token }}
@@ -37,4 +38,5 @@
         </form>
     </div>
 </body>
+
 </html>

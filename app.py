@@ -3,9 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from flask_session import Session
-from sqlalchemy import ForeignKey, desc
+from sqlalchemy import ForeignKey, desc, func
 from datetime import datetime, timedelta
-from forms import LoginForm, RegisterForm, ProductForm, CheckoutForm, AdminAlbumForm
+from forms import LoginForm, RegisterForm, ProductForm, CheckoutForm, AlbumForm, SearchForm
 import secrets
 
 # Create Flask Instance
@@ -22,13 +22,10 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 Session(app)
 
-
 # Initialise bcrypt encyption for passwords
 bcrypt = Bcrypt(app)
 # Initialise the Database
 db = SQLAlchemy(app)
-
-
 
 # Flask_Login Config
 login_manager = LoginManager()
@@ -60,9 +57,10 @@ class Products(db.Model):
     image = db.Column(db.String, nullable=False)
     price = db.Column(db.Integer, nullable=False)
     type = db.Column(db.String, nullable=False)
+    stock = db.Column(db.Integer, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-    order_items = db.relationship('OrderItems', back_populates='products')
+    order_items = db.relationship('OrderItems', back_populates='products', cascade='all, delete-orphan')
 
 class Albums(db.Model):
    __tablename__ = "albums"
@@ -94,33 +92,97 @@ class OrderItems(db.Model):
 def index():
     return render_template('index.html')
 
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
+
+@app.route('/search', methods=['POST'])
+def search():
+    form = SearchForm()
+    if form.validate_on_submit():
+        search_value = request.form['search_field']
+        matching_products = db.session.query(Products).filter(Products.name.like('%' + search_value + '%'))
+        matching_products = matching_products.order_by(Products.name).all()
+
+        return render_template('search.html', form=form, search_value=search_value, products=matching_products)
+    else:
+        flash("Input Required")
+        return redirect(url_for('index'))
+
+
+
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    product_details = db.session.query(Products, Albums).join(Products).filter(Products.type == 'music').all()
+    products = db.session.query(Products).all()
     product_form = ProductForm()
-    details_form = AdminAlbumForm()
     if product_form.validate_on_submit():
         if 'product_id' in request.form:
             product = db.session.query(Products).get(request.form['product_id'])
-            product.name = request.form['name'] # type: ignore
+            product.name = request.form['product_name'] # type: ignore
             product.image = request.form['image'] # type: ignore
             product.price = request.form['price'] # type: ignore
             product.type = request.form['type'] # type: ignore
-
+            product.stock = request.form['stock'] # type: ignore
+            
+            db.session.add(product)
             db.session.commit()
             flash("Product Edited Successfully")
             return redirect(url_for('admin'))
         else:
-            product = Products(name=request.form['name'],
+            product = Products(name=request.form['product_name'],
                                 image=request.form['image'],
                                 price=request.form['price'],
-                                type=request.form['type']) # type: ignore
+                                type=request.form['type'],
+                                stock=request.form['stock']) # type: ignore
             db.session.add(product)
             db.session.commit()
             flash("Product Added Successfully")
             return redirect(url_for('admin'))
-    return render_template('admin.html', products=product_details, form=details_form, product_form=product_form)
+    return render_template('admin.html', products=products, product_details=product_details, product_form=product_form)
+
+@app.route('/admin/analysis')
+@login_required
+def product_analysis():
+    most_popular_products = db.session.query(Products.name, func.sum(OrderItems.quantity).label('total_quantity')) \
+                            .join(OrderItems) \
+                            .group_by(Products.name) \
+                            .order_by(func.sum(OrderItems.quantity).desc()) \
+                            .limit(5) \
+                            .all()
+    
+    popular_labels = [product[0] for product in most_popular_products]
+    popular_values = [product[1] for product in most_popular_products]
+    print(popular_labels)
+    print(popular_values)
+    return render_template('productAnalysis.html', popular_labels=popular_labels, popular_values=popular_values)
+
+@app.route('/product_details/<id>', methods=['GET', 'POST'])
+@login_required
+def product_details(id):
+    product_details = db.session.query(Albums).filter_by(fk_product_id=id).first()
+    details_form = AlbumForm()
+    
+    if details_form.validate_on_submit():
+        album = db.session.query(Albums).filter(Albums.fk_product_id == id).first()
+        if album == None:
+            album = Albums(name=request.form['album_name'],
+                           year=request.form['year'],
+                           fk_product_id=id) # type: ignore
+        else:
+            album.name = request.form['album_name'] # type: ignore
+            album.year = request.form['year'] # type: ignore
+            album.fk_product_id = id # type: ignore
+        
+        db.session.add(album)
+        db.session.commit()
+        flash("Product Details Edited Successfully")
+        return redirect(url_for('admin'))
+    else:
+        print(details_form.errors)
+
+    return render_template('productDetails.html',product_id=id, product_details=product_details, details_form=details_form)
 
 
 @app.route('/delete/<id>', methods=['GET', 'POST'])
@@ -253,6 +315,11 @@ def checkout():
         db.session.commit()
         
         for data in basket_data:
+            product = db.session.query(Products).filter(Products.product_id == data['product_id']).first()
+            print(product)
+            product.stock -= data['quantity'] # type: ignore
+            db.session.add(product)
+            db.session.commit()
             order_items = OrderItems(quantity=data['quantity'], fk_order_id=order.order_id, fk_product_id=data['product_id']) # type: ignore 
             db.session.add(order_items)
         
@@ -264,9 +331,7 @@ def checkout():
     else:
         print(form.errors)
         
-
-
-
+        
     return render_template('checkout.html', form=form)
 
 def totalPriceCalc(basket_data, product_data):

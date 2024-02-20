@@ -7,32 +7,36 @@
 <nav class="navbar navbar-dark bg-light">
     <div class="container">
         <a class="navbar-brand" href="/">
-        <img src="../static/wmgzon_logo.png" alt="wmgzon logo" style="width: 250px;"/>
+            <img src="../static/wmgzon_logo.png" alt="wmgzon logo" style="width: 250px;" />
         </a>
-        <form class="d-flex justify-content-center">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
+        <form class="d-flex justify-content-center" method="POST" action="{{ url_for('search') }}">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
+            {{ form.search_field(class="form-control me-2") }}
+            {{ form.submit(class="btn btn-outline-success", placeholder="Search") }}
         </form>
         <ul class="nav">
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('view_basket') }}">
                     <button type="button" class="btn btn-outline-primary position-relative">
                         Basket
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-                        id="basketCounter" style="display: none;"></span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            id="basketCounter" style="display: none;"></span>
                     </button>
                 </a>
             </li>
-        {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated %}
             {% if current_user.type == "Admin" %}
-                <a class="nav-link" href="{{ url_for('admin') }}">
-                    <button type="button" class="btn btn-outline-primary position-relative" style="text-transform: capitalize">
-                        {{ current_user.username }}'s Account ADMIN
-                    </button>
-                </a>
+            <a class="nav-link" href="{{ url_for('admin') }}">
+                <button type="button" class="btn btn-outline-primary position-relative"
+                    style="text-transform: capitalize">
+                    ADMIN
+                </button>
+            </a>
             {% else %}
             <a class="nav-link" href="{{ url_for('account') }}">
-                <button type="button" class="btn btn-outline-primary position-relative" style="text-transform: capitalize">
+                <button type="button" class="btn btn-outline-primary position-relative"
+                    style="text-transform: capitalize">
                     {{ current_user.username }}'s Account
                 </button>
             </a>
@@ -44,7 +48,7 @@
                     </button>
                 </a>
             </li>
-        {% else %}
+            {% else %}
             <li class="nav-item justif-content-end">
                 <a class="nav-link" href="{{ url_for('login') }}">
                     <button type="button" class="btn btn-primary position-relative">
@@ -59,21 +63,21 @@
                     </button>
                 </a>
             </li>
-             
-        {% endif %}
+
+            {% endif %}
         </ul>
 
     </div>
 </nav>
 <ul class="nav nav-pills justify-content-center">
     <li class="nav-item">
-      <a class="nav-link" id="animals" aria-current="page" href="/animals">Animals</a>
+        <a class="nav-link" id="animals" aria-current="page" href="/animals">Animals</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="books" aria-current="page" href="/books">Books</a>
+        <a class="nav-link" id="books" aria-current="page" href="/books">Books</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="carparts" aria-current="page" href="/carparts">Car Parts</a>
+        <a class="nav-link" id="carparts" aria-current="page" href="/carparts">Car Parts</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" id="music" aria-current="page" href="/music">Music</a>
@@ -87,14 +91,14 @@
 </ul>
 
 {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success alert-dismissable" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
 {% endwith %}
-                
+
 {% endblock %}

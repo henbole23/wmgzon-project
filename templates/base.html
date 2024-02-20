@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html land="en">
+
 <head>
 
-    <link href="{{ url_for('static', filename = 'css/bootstrap.min.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename = 'css/bootstrap.min.css') }}" rel="stylesheet" />
 
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
@@ -12,9 +13,13 @@
         }
     </style>
 </head>
+
 <body>
     {% block body %}{% endblock %}
-    
+    <script src="https://cdn.jsdelivr.net/npm/cdbootstrap/js/cdb.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cdbootstrap/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/9d1d9a82d2.js" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
+
 </html>

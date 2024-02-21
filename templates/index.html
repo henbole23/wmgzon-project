@@ -2,18 +2,35 @@
 {% include 'headers/productHeader.html' %}
 
 {% block body %}
-<div class="300-px-height">
-  <div id="carouselExampleInterval" class="carousel slide h-100" style="max-height: 100vh;" data-bs-ride="carousel">
+<div class="row justify-content-center" style="background-color: black;">
+  <h1>Recently Added</h1>
+  <div id="carouselExampleInterval" class="carousel h-100" style="max-height: 100vh; max-width: 50vw;" data-bs-ride="carousel">
     <div class="carousel-inner">
-      <div class="carousel-item active" data-bs-interval="5000">
-        <img src="static\products_artwork\backinblack_acdc.jpg" class="d-block h-100" alt="...">
-      </div>
-      <div class="carousel-item" data-bs-interval="5000">
-        <img src="static\products_artwork\rockorbust_acdc.jpg" class="d-block h-100" alt="...">
-      </div>
-      <div class="carousel-item" data-bs-interval="5000">
-        <img src="static\products_artwork\highwaytohell_acdc.jpg" class="d-block h-100" alt="...">
-      </div>
+      {% for product in products %}
+        {% if loop.first %}
+          <div class="carousel-item justify-content-center active" data-bs-interval="5000">
+            <div class="row">
+              <div class="col-lg-8">
+                <img src="static\products_artwork\{{ product.image }}" class="d-block h-100" alt="...">
+              </div>
+              <div class="col-lg-4" style="color: white;">
+                <h1>{{ product.name }}</h1>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="carousel-item justify-content-center" data-bs-interval="5000">
+            <div class="row">
+              <div class="col-lg-8">
+                <img src="static\products_artwork\{{ product.image }}" class="d-block h-100" alt="...">
+              </div>
+              <div class="col-lg-4" style="color: white;">
+                <h1>{{ product.name }}</h1>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>

@@ -19,6 +19,7 @@ class AlbumForm(FlaskForm):
     album_id = form.IntegerField(label='ID')
     album_name = form.StringField(label='Album Name')
     year = form.IntegerField(label='Release Year')
+    fk_artist_id = form.IntegerField(label='Artist ID')
     fk_product_id = form.IntegerField(label='Product ID')
     submit = form.SubmitField('Submit')
 

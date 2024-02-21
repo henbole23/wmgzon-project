@@ -22,25 +22,29 @@
         {% endfor %} -->
     </div>
 </div>
-<div class="productSection">
+<div class="productSection" style="background-color: lightgrey; border-radius: 25px; margin: 10px; padding: 5px;">
     {% if page_name == "music" %}
-    <div id="filters">
-        <sort style="padding-left:25px; margin-top: 5px; width: 100%;">Sort:</sort>
-        <form id="productSortForm" action="/{{ page_name }}" method="POST">
-            <select name="sort" id="sortOptions">
-                <option value="descend">Release Year: Newest to Oldest</option>
-                <option value="ascend">Release Year: Oldest to Newest</option>
-            </select>
-        </form>
+    <div id="productHeader" class="container" style="background-color: grey; margin: 10px; border-radius: 50px">
+        <div id="filters">
+            <form id="productSortForm" action="/{{ page_name }}" method="POST">
+                <span><label for="sortOptions" style="padding-left:25px; margin-top: 5px; width: 100%;">Sort:</label></span>
+                <span><select name="sort" id="sortOptions">
+                    <option value="descend">Release Year: Newest to Oldest</option>
+                    <option value="ascend">Release Year: Oldest to Newest</option>
+                </select></span>
+            </form>
+        </div>
+        <div id="productTotal">{{ products.len }}</div>
     </div>
+    
     {% endif %}
     <div class="card-group">
         {% for product in products: %}
-        <div class="col-md-2">
+        <div class="col-md-2" style="margin:10px;">
             <a href="{{ url_for('get_product_page', product_id=product.product_id) }}">
-                <div class="card">
-                    <img src="static\products_artwork\{{ product.image }}" alt="{{ product.name }} album art">
-                    <div class="card-body">
+                <div class="card" style="border-radius: 25px;">
+                    <img src="static\products_artwork\{{ product.image }}" style="border-top-left-radius: 25px; border-top-right-radius: 25px;" alt="{{ product.name }} album art">
+                    <div class="card-body justify-content-center">
                         <p class="card-text">{{ product.name }}</p>
                         <p class="card-text">{{ product.price }}</prc>
                     </div>

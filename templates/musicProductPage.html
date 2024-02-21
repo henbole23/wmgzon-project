@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% include 'headers/productHeader.html' %}
+{% block body %}
+
+    <div class="row">
+        <div class="box col-lg-3">
+            <img src="../static/products_artwork/{{ product.image }}" alt="artwork" style="width: 400px">
+        </div>
+        <div class="box col-lg-6">
+            <h2 style="display: inline; margin-right: 10px;">{{ product.name }}</h2>
+            <h6 style="display: inline;"><i>Artist</i></h6>
+            <table class="table table-hover table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th
+                </tr>
+                {% for product in products: %}
+                <tr>
+                  <td>{{ product.product_id }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.image }}</td>
+                  <td>£{{ product.price }}</td>
+                  <td>{{ product.type }}</td>
+                  <td>{{ product.stock }}</td>
+                  <td><a href="/product_details/{{ product.product_id }}" class="btn btn-success btn-xs">Set/View</a></td>
+                  <td><a class="btn btn-warning btn-xs" data-bs-toggle="modal"
+                      data-bs-target="#editproductmodal{{product.product_id}}">Edit</a></td>
+                  <td><a href="/delete/{{ product.product_id }}" type="button" class="btn btn-danger btn-xs"
+                      onclick="return confirm('Confirm Product {{product.product_id}} Deletion')">Delete</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="box col-lg-3">
+            <h2><i>Format</i></h2>
+            <p>{{ product.price }}</p>
+            <form action="/add_to_basket" method="POST">
+                <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                <label for="quantity">Quantity:</label>
+                <select name="quantity">
+                    {% for quantity in range(1, 6) %}
+                    <option value="{{ quantity }}">{{ quantity }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-primary" type="submit">Add to Basket</button>
+            </form>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+{% endblock %}

@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
-{% include 'headers/plainHeader.html' %}
+{% include 'headers/accountHeader.html' %}
 
 {% block body %}
+{% if orders %}
+<table class="table table-hover table-light">
+    <tr>
+      <th>Order ID</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+      <td>{{ order.order_id }}</td>
+    </tr>
+    {% endfor %}
+{% else %}
+<h3>You currently have no orders</h3>
+{% endif %}
 {% endblock %}

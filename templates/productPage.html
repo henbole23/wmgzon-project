@@ -1,21 +1,103 @@
 {% extends 'base.html' %}
 {% include 'headers/productHeader.html' %}
 {% block body %}
-<div>
-    <img src="../static/products_artwork/{{ product.image }}" alt="artwork" style="width: 525px">
-</div>
-<p>{{ product.name }}</p>
-<p>{{ product.price }}</p>
-<form action="/add_to_basket" method="POST">
-    <input type="hidden" name="product_id" value="{{ product.product_id }}">
-    <label for="quantity">Quantity:</label>
-    <select name="quantity">
-        {% for quantity in range(1, 6) %}
-        <option value="{{ quantity }}">{{ quantity }}</option>
-        {% endfor %}
-    </select>
-    <button class="btn btn-primary" type="submit">Add to Basket</button>
-</form>
+<div style="margin-left: 50px; margin-right: 50px;">
+    <div class="row" style="background-color: lightgrey; padding: 10px; border-radius: 25px;">
+        <div class="box col-lg-3">
+            <img src="../static/products_artwork/{{ product.image }}" alt="artwork"
+                style="width: 300px; border-radius: 25px;">
+        </div>
+        <div class="box col-lg-6">
+            <h2 style="display: inline; margin-right: 10px;">{{ product.name }}</h2>
+            <h6 style="display: inline;"><i>{{ artist.name }}</i></h6>
+            <div class="table-container" style="overflow-y: scroll; max-height: 368px;">
+                <table class="table table-hover table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Length</th>
+                    </tr>
+                    {% for song in songs: %}
+                    <tr>
+                        <td>{{ song.song_id }}</td>
+                        <td>{{ song.name }}</td>
+                        <td>{{ song.length }} Seconds</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="box col-lg-3" style="background-color: white; border-radius: 5px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <h2><i>Format</i></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <form action="/add_to_basket" method="POST">
+                            <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                            <div class="btn-group-vertical" data-toggle="buttons">
+                                <div class="row">
+                                    <div class="col d-flex justify-content-center">
+                                        <label class="btn btn-primary" style="margin: 5px;">
+                                            <input type="radio" name="options"> Vinyl
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col d-flex justify-content-center">
+                                        <label class="btn btn-primary" style="margin: 5px;">
+                                            <input type="radio" name="options"> CD
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col d-flex justify-content-center">
+                                        <label class="btn btn-primary" style="margin: 5px;">
+                                            <input type="radio" name="options"> Cassette
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col d-flex justify-content-center">
+                                        <label class="btn btn-primary" style="margin: 5px;">
+                                            <input type="radio" name="options"> Digital
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="quantityField">Quantity:</label>
+                                <select id="quantityField" name="quantity">
+                                    {% for quantity in range(1, 6) %}
+                                    <option value="{{ quantity }}">{{ quantity }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <p style="display: inline;">£ {{ product.price }}</p>
+                            <button class="btn btn-primary" type="submit">Add to Basket</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box col-lg-9">
+            <h3><i>{{ artist.name }} Bio</i></h3>
+            {{ artist.bio }}
+        </div>
+        <div class="box col-lg-3">
+            <h3><i>Customer Rating</i></h3>
+            <p>*****</p>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

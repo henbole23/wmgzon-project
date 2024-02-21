@@ -6,25 +6,78 @@
 
 {% block body %}
 <form id="editDetailsForm" method="POST">
-    {{ details_form.csrf_token }}
-    {{ details_form.hidden_tag() }}
-    <div id="editDetailsModalBody" class="modal-body">
-      <div class="form-group">
-        {{ details_form.album_name.label }}
-        {{ details_form.album_name(value=product_details.name, class="form-control") }}
+  {{ details_form.csrf_token }}
+  {{ details_form.hidden_tag() }}
+  <div id="editDetailsModalBody" class="modal-body">
+    <div class="form-group">
+      {{ details_form.album_name.label }}
+      {{ details_form.album_name(value=album.name, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ details_form.year.label }}
+      {{ details_form.year(value=album.year, class="form-control", type="number") }}
+    </div>
+    <div class="form-group">
+      {{ details_form.fk_artist_id.label }}
+      {{ details_form.fk_artist_id(value=product_id, class="form-control", type="number") }}
+    </div>
+    <div class="form-group">
+      {{ details_form.fk_product_id.label }}
+      {{ details_form.fk_product_id(value=product_id, class="form-control", type="number") }}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="/admin"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button></a>
+    {{ details_form.submit(class="btn btn-primary") }}
+  </div>
+</form>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="jumbotron p-3">
+      <h2>Manage Songs <button type="button" class="btn btn-success float-end" data-bs-toggle="modal"
+          data-bs-target="#addsongmodal">Add New Song</button></h2>
+
+      {% with messages = get_flashed_messages() %}
+
+      {% if messages %}
+
+      {% for message in messages %}
+      <div class="alert alert-success alert-dismissable" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
-      <div class="form-group">
-        {{ details_form.year.label }}
-        {{ details_form.year(value=product_details.year, class="form-control", type="number") }}
-      </div>
-      <div class="form-group">
-        {{ details_form.fk_product_id.label }}
-        {{ details_form.fk_product_id(value=product_id, class="form-control", type="number") }}
+
+      {% endfor %}
+      {% endif %}
+      {% endwith%}
+      <table class="table table-hover table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Length</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+        {% for song in songs: %}
+        <tr>
+          <td>{{ song.song_id }}</td>
+          <td>{{ song.name }}</td>
+          <td>{{ song.length }} seconds</td>
+          <td><a class="btn btn-warning btn-xs" data-bs-toggle="modal"
+              data-bs-target="">Edit</a></td>
+          <td><a href="" type="button" class="btn btn-danger btn-xs"
+              onclick="">Delete</button></td>
+        </tr>
+
+        {% endfor %}
+
+      </table>
+
       </div>
     </div>
-    <div class="modal-footer">
-      <a href="/admin"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button></a>
-      {{ details_form.submit(class="btn btn-primary") }}
-    </div>
-  </form>
+  </div>
+</div>
+
+
 {% endblock %}

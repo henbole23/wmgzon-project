@@ -5,38 +5,26 @@
 
 
 {% block body %}
-<form id="editDetailsForm" method="POST">
-  {{ details_form.csrf_token }}
-  {{ details_form.hidden_tag() }}
-  <div id="editDetailsModalBody" class="modal-body">
-    <div class="form-group">
-      {{ details_form.album_name.label }}
-      {{ details_form.album_name(value=album.name, class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ details_form.year.label }}
-      {{ details_form.year(value=album.year, class="form-control", type="number") }}
-    </div>
-    <div class="form-group">
-      {{ details_form.fk_artist_id.label }}
-      {{ details_form.fk_artist_id(value=product_id, class="form-control", type="number") }}
-    </div>
-    <div class="form-group">
-      {{ details_form.fk_product_id.label }}
-      {{ details_form.fk_product_id(value=product_id, class="form-control", type="number") }}
-    </div>
-  </div>
-  <div class="modal-footer">
-    <a href="/admin"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button></a>
-    {{ details_form.submit(class="btn btn-primary") }}
-  </div>
-</form>
+{% if product.music_info[0] %}
+<div class="container text-white">
+  <h3>Album Name</h3>
+  {{product.music_info[0].name}}
+  <h3>Release Year</h3>
+  {{product.music_info[0].year}}
+  <h3>Artist Name</h3>
+  {{ product.music_info[0].artists.name }}
+  <h3>Artist Bio</h3>
+  {{ product.music_info[0].artists.bio }}
+</div>
+
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <div class="jumbotron p-3">
-      <h2>Manage Songs <button type="button" class="btn btn-success float-end" data-bs-toggle="modal"
-          data-bs-target="#addsongmodal">Add New Song</button></h2>
+      <h2>Manage Songs 
+        <button type="button" class="btn btn-success float-end" data-bs-toggle="modal"data-bs-target="#addsongmodal">Add New Song</button>
+        <button type="button" class="btn btn-warning float-end" style="margin-right: 10px;" data-bs-toggle="modal"data-bs-target="#editdetailsmodal">Edit Details</button>
+      </h2>
 
       {% with messages = get_flashed_messages() %}
 
@@ -59,7 +47,7 @@
           <th>Edit</th>
           <th>Delete</th>
         </tr>
-        {% for song in songs: %}
+        {% for song in product.music_info[0].songs: %}
         <tr>
           <td>{{ song.song_id }}</td>
           <td>{{ song.name }}</td>
@@ -73,11 +61,123 @@
         {% endfor %}
 
       </table>
-
       </div>
     </div>
   </div>
 </div>
+{% else %}
+<div class="container text-white">
+  <h3>Add Product Details</h3>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="jumbotron p-3">
+        <form action="" method="POST">
+          {{ details_form.csrf_token }}
+          {{ details_form.hidden_tag() }}
+          <div class="modal-body">
+            <div class="form-group">
+              <label>{{ details_form.album_name.label }}</label>
+              {{ details_form.album_name(class="form-control bg-secondary text-white") }}
+            </div>
+            <div class="form-group">
+              <label>{{ details_form.year.label }}</label>
+              {{ details_form.year(class="form-control bg-secondary text-white") }}
+            </div>
+            <div class="form-group">
+              <label>{{ details_form.artist_name.label }}</label>
+              {{ details_form.artist_name(class="form-control bg-secondary text-white") }}
+            </div>
+            <div class="form-group">
+              <label>{{ details_form.artist_bio.label }}</label>
+              {{ details_form.artist_bio(class="form-control bg-secondary text-white") }}
+            </div>
+            <div class="form-group">
+              <label>{{ details_form.genres.label }}</label>
+              {{ details_form.genres(class="form-control bg-secondary text-white") }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            {{ details_form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<!-- Add Song Modal -->
+<div class="modal fade" id="addsongmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add Song</h5>
+      </div>
+      <form action="" method="POST">
+        {{ song_form.csrf_token }}
+        {{ song_form.hidden_tag() }}
+        <div class="modal-body">
+          <div class="form-group">
+            <label>{{ song_form.name.label }}</label>
+            {{ song_form.name(class="form-control bg-secondary text-white") }}
+          </div>
+          <div class="form-group">
+            <label>{{ song_form.length.label }}</label>
+            {{ song_form.length(class="form-control bg-secondary text-white") }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          {{ song_form.submit(class="btn btn-primary") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
+
+
+<!-- Edit Product Details Modal -->
+<div class="modal fade" id="editdetailsmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Details</h5>
+      </div>
+      <form action="" method="POST">
+        {{ details_form.csrf_token }}
+        {{ details_form.hidden_tag() }}
+        <div class="modal-body">
+          <div class="form-group">
+            <label>{{ details_form.album_name.label }}</label>
+            {{ details_form.album_name(class="form-control bg-secondary text-white", value=product.music_info[0].name) }}
+          </div>
+          <div class="form-group">
+            <label>{{ details_form.year.label }}</label>
+            {{ details_form.year(class="form-control bg-secondary text-white", value=product.music_info[0].year) }}
+          </div>
+          <div class="form-group">
+            <label>{{ details_form.artist_name.label }}</label>
+            {{ details_form.artist_name(class="form-control bg-secondary text-white, value=product.music_info[0].artists.name") }}
+          </div>
+          <div class="form-group">
+            <label>{{ details_form.artist_bio.label }}</label>
+            {{ details_form.artist_bio(class="form-control bg-secondary text-white, value=product.music_info[0].artists.bio") }}
+          </div>
+          <div class="form-group">
+            <label>{{ details_form.genres.label }}</label>
+            {{ details_form.genres(class="form-control bg-secondary text-white") }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          {{ details_form.submit(class="btn btn-primary") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

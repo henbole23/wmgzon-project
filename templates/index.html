@@ -2,44 +2,35 @@
 {% include 'headers/productHeader.html' %}
 
 {% block body %}
-<div class="row justify-content-center" style="background-color: black;">
-  <h1>Recently Added</h1>
-  <div id="carouselExampleInterval" class="carousel h-100" style="max-height: 100vh; max-width: 50vw;" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      {% for product in products %}
-        {% if loop.first %}
-          <div class="carousel-item justify-content-center active" data-bs-interval="5000">
-            <div class="row">
-              <div class="col-lg-8">
-                <img src="static\products_artwork\{{ product.image }}" class="d-block h-100" alt="...">
-              </div>
-              <div class="col-lg-4" style="color: white;">
-                <h1>{{ product.name }}</h1>
-              </div>
-            </div>
-          </div>
-        {% else %}
-          <div class="carousel-item justify-content-center" data-bs-interval="5000">
-            <div class="row">
-              <div class="col-lg-8">
-                <img src="static\products_artwork\{{ product.image }}" class="d-block h-100" alt="...">
-              </div>
-              <div class="col-lg-4" style="color: white;">
-                <h1>{{ product.name }}</h1>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-      {% endfor %}
+<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    {% for product in recently_added %}
+    <div class="carousel-item {% if loop.index == 1 %}active{% endif %}" style="position: relative; width: 100vw; height: 35vh; background-image: url('../static/products_artwork/{{ product.image }}'); background-size: cover; background-position: center center;">
+      <div class="d-flex justify-content-center align-items-end h-100 position-absolute w-100">
+        <div class="text-center">
+          <h1 style="color: white;">{{ product.name }}</h1>
+          <a href="{{ url_for('get_product_page', product_id=product.product_id) }}"><button class="btn btn-primary" style="margin-bottom: 20px;"><h3>BUY NOW</h3></button></a>
+        </div>
+      </div>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
+    {% endfor %}
   </div>
 </div>
+<div class="card-group">
+  {% for product in products: %}
+  <div class="col-md-2" style="margin:10px;">
+      <a href="{{ url_for('get_product_page', product_id=product.product_id) }}">
+          <div class="card" style="border-radius: 25px;">
+              <img src="static\products_artwork\{{ product.image }}" style="border-top-left-radius: 25px; border-top-right-radius: 25px;" alt="{{ product.name }} album art">
+              <div class="card-body justify-content-center">
+                <h3 class="card-text">{{ product.name }}</h3>
+                <h5 class="card-text prices">{{ product.price }}</h5>
+                <script>priceConversion('h5', 'prices')</script>
+              </div>
+          </div>
+      </a>
+  </div>
+  {% endfor %}
+</div>
+
 {% endblock %}

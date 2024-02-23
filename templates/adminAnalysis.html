@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% include 'headers/adminHeader.html' %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<style>
+  .chart-container {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+  }
+</style>
+
+<body>
+  <div class="jumbotron p-3">
+    <h3 class="text-white">Website Analysis</h3>
+  </div>
+  <div class="card chart-container">
+    <h5 class="d-flex justify-content-center">Top 5 Products</h5>
+    <canvas id="chart"></canvas>
+  </div>
+
+</body>
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js">
+</script>
+<script>
+      const ctx = document.getElementById("chart").getContext('2d');
+      const chart_labels = {{ popular_labels | tojson }};
+      const chart_values = {{ popular_values | tojson }};
+      const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chart_labels,
+          datasets: [{
+            label: 'Products Sold',
+            backgroundColor: 'rgba(161, 198, 247, 1)',
+            borderColor: 'rgb(47, 128, 237)',
+            data: chart_values,
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+              }
+            }]
+          }
+        },
+      });
+</script>
+
+</html>
+{% endblock %}

@@ -1,1 +1,3 @@
-# wmgzon-project
+# WMGZON
+
+WMGZON is an upcoming eCommerce site selling a variety of different products, from music to sports accessories. This project contains the source code for the website's phase 1 implementation. In its current format, this project offers a landing page, with recently added products displayed in a carousel. There are individual product category pages, accessed via a product bar. The site also features admin functionality as well as product sorting and filtering. Users are able to complete the entire journey through the page to checkout, although the checkout form does not currently link to the database. Speaking of which, this project uses SQLite to store all user and product data required for the website to run.

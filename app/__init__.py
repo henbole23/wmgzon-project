@@ -39,11 +39,11 @@ def create_app(database="sqlite:///wmgzon.db"):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return db.session.query(Users).get(int(user_id))
+        return db.session.query(Users).filter_by(user_id=int(user_id)).first()
 
     @login_manager.unauthorized_handler
     def unauthorised_user():
         flash('Please Log In First', 'warning')
-        return redirect(url_for('login'))
+        return redirect(url_for('home.login'))
 
     return app

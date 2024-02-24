@@ -19,8 +19,7 @@ def home():
 @home_bp.route('/register', methods=['GET', 'POST'])
 def register():
     register_form = RegisterForm()
-    # if register_form.validate_on_submit():
-    if request.method == ['POST']:
+    if register_form.validate_on_submit():
         user = db.session.query(Users).filter_by(
             email=request.form['email']).first()
         if user is None:
@@ -36,6 +35,9 @@ def register():
             flash('User already exists. Please Log In', 'warning')
             return redirect(url_for('home.login'))
     else:
+        for error in register_form.errors:
+            print(error)
+            flash(str(error), 'warning')
         print(f"Register Form VALID: {register_form.validate_on_submit()}")
     return render_template('register.html', form=register_form)
 
@@ -45,7 +47,8 @@ def login():
     login_form = LoginForm()
     if login_form.validate_on_submit():
         print(f"form Valid: {login_form.validate_on_submit()}")
-        user = Users.query.filter_by(username=request.form['username']).first()
+        user = db.session.query(Users).filter_by(
+            username=request.form['username']).first()
         if user:
             print("User Valid")
             if bcrypt.check_password_hash(user.password, request.form['password']):
@@ -54,7 +57,7 @@ def login():
                 if user.type == "Admin":
                     return redirect(url_for('admin.admin'))
                 else:
-                    return redirect(url_for('home.index'))
+                    return redirect(url_for('home.home'))
             else:
                 print("Password Invalid")
                 flash("Incorrect Password", 'warning')
@@ -64,7 +67,7 @@ def login():
     return render_template('login.html', form=login_form)
 
 
-@home_bp.route('/logout', methods=['GET', 'POST'])
+@home_bp.route('/logout', methods=['GET'])
 @login_required
 def logout():
     logout_user()
@@ -78,7 +81,7 @@ def search():
     if search_form.validate_on_submit():
         search_value = request.form['search_field']
         matching_products = db.session.query(Products).filter(
-            Products.name.like('%' + search_value + '%'))
+            Products.name.like('%' + search_value + '%'))  # type: ignore
         matching_products = matching_products.order_by(Products.name).all()
 
         return render_template('search.html', search_form=search_form, search_value=search_value, products=matching_products)

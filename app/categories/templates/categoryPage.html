@@ -16,7 +16,7 @@
                             style="border-top-left-radius: 25px; border-top-right-radius: 25px;"
                             alt="{{ product.name }} album art">
                         <div class="card-body justify-content-center">
-                            <p class="card-text">{{ product.name }}</p>
+                            <p class="card-text">{{ loop.index }}. {{ product.name }}</p>
                         </div>
                     </div>
                 </a>

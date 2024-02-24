@@ -4,6 +4,7 @@ import datetime
 
 
 class LoginForm(FlaskForm):
+    """Class for login form fields"""
     username = StringField(label='Username', validators=[
                            validators.InputRequired(), validators.Length(min=4, max=16)])
     password = PasswordField(label='Password', validators=[
@@ -12,6 +13,7 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
+    """Class for register form fields"""
     email = EmailField(label='Email Address', validators=[
                        validators.InputRequired()])
     username = StringField(label='username', validators=[

@@ -7,20 +7,19 @@ from app.models import AlbumGenre, Albums, Artists, Genres, OrderItems, Products
 from app.extensions import db
 from app.decorators import role_required
 
+# Initialisation of  admin blueprint
 admin_bp = Blueprint('admin', __name__, template_folder='templates')
-
-# Route for admin home page
 
 
 @admin_bp.route('/')
+# Route for admin home page
 @role_required('Admin')
-def admin():
+def admin_home():
     return render_template('admin.html')
 
+
+@admin_bp.route('/products', methods=['GET', 'POST'])
 # Route for admin product management page
-
-
-@admin_bp.route('/products', methods=['GET', 'POST', 'PUT'])
 @role_required('Admin')
 def admin_products():
     products = db.session.query(Products).all()
@@ -55,7 +54,8 @@ def admin_products():
 # Route for PUT requests to update product details
 
 
-@admin_bp.route('/products/update/<id>', methods=['PUT'])
+@admin
+@admin_bp.route('/products/<id>', methods=['PUT'])
 @role_required('Admin')
 def update_product(id):
     """ Function which handles updating products"""
@@ -113,8 +113,8 @@ def set_product_details(id):
 @role_required('Admin')
 def admin_product_details(id):
     product = Products.query.get(id)
-    genres = Genres.query.join(AlbumGenre).filter(
-        AlbumGenre.fk_album_id == product.music_info[0].album_id)
+    genres = Genres.query.join(AlbumGenre).filter_by(
+        fk_album_id=product.music_info[0].album_id)
     product = db.session.query(Products).filter_by(product_id=id).first()
 
     song_form = SongForm()

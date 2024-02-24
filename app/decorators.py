@@ -4,6 +4,7 @@ from flask import abort
 
 
 def role_required(role):
+    """Decorator function for ensuring only authorised users access a certain page"""
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

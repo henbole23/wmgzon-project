@@ -20,17 +20,17 @@ def music():
                                  for genre in db.session.query(Genres.genre_id, Genres.name).all()]
     filter_form.genre.choices.insert(0, ('no_filter', 'No Filter'))
 
-    popular_products = db.session.query(Products).join(OrderItems, Products.product_id == OrderItems.fk_product_id) \
-                                                 .group_by(Products.product_id)\
-                                                 .order_by(func.sum(OrderItems.quantity).desc()) \
-                                                 .limit(10).all()
+    popular_products = Products.query.join(OrderItems, Products.product_id == OrderItems.fk_product_id) \
+        .group_by(Products.product_id)\
+        .order_by(func.sum(OrderItems.quantity).desc()) \
+        .limit(10).all()
 
     products = db.session.query(Products).join(Albums).join(Artists).join(
         AlbumGenre).join(Genres).filter(Products.type == 'music')
 
     if filter_form.validate_on_submit():
         print(request.form['artist'])
-        return redirect(url_for('music.music_filters', artist=request.form['artist'], genre=request.form['genre']))
+        return redirect(url_for('categories.music_filters', artist=request.form['artist'], genre=request.form['genre']))
 
     products = products.all()
 
@@ -39,21 +39,23 @@ def music():
 
 @category_bp.route('/filters')
 def music_filters():
-    products = db.session.query(Products).join(Albums).join(Artists).join(
-        AlbumGenre).join(Genres).filter(Products.type == 'music')
+    products = Products.query.filter_by(type='music').join(Albums).join(Artists).join(
+        AlbumGenre).join(Genres)
     print(request.args)
-    if request.args.get('artist') != 'no_filter':
+    genre = request.args.get('genre')
+    artist = request.args.get('artist')
+    if artist != 'no_filter':
         # Do artist filtering
         products = products.filter(
-            Artists.artist_id == request.args.get('artist'))
-    if request.args.get('genre') != 'no_filter':
+            Artists.artist_id == artist)
+    if genre != 'no_filter':
         # Do genre filtering
         print(request.args.get('genre'))
         products = products.filter(
-            Genres.genre_id == request.args.get('genre'))
+            Genres.genre_id == genre)
     products = products.all()
 
-    return render_template('musicFilters.html', products=products)
+    return render_template('musicFilters.html', products=products, genre=genre, artist=artist)
 
 
 @category_bp.route('/<int:product_id>')

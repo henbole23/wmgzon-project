@@ -3,7 +3,7 @@ from flask_login import current_user
 from sqlalchemy import func
 
 from app.forms import MusicProductForm, ProductForm, SongForm, UserEditForm
-from app.models import AlbumGenre, Albums, Artists, Genres, OrderItems, Products, Songs, Users
+from app.models import AlbumGenre, Albums, Artists, Genres, OrderItems, Orders, Products, Songs, Users
 from app.extensions import db
 from app.decorators import role_required
 
@@ -54,7 +54,6 @@ def admin_products():
 # Route for PUT requests to update product details
 
 
-@admin
 @admin_bp.route('/products/<id>', methods=['PUT'])
 @role_required('Admin')
 def update_product(id):
@@ -212,9 +211,16 @@ def admin_analysis():
         .order_by(func.sum(OrderItems.quantity).desc()) \
         .limit(5) \
         .all()
+    
+    revenue_over_time = db.session.query(func.datetime(Orders.date_added).label('datetime'), func.sum(OrderItems.quantity * Products.price).label('revenue')).join(OrderItems, Orders.order_id == OrderItems.fk_order_id)\
+                                                .join(Products, OrderItems.fk_product_id == Products.product_id)\
+                                                .group_by(func.extract('hour', Orders.date_added))\
+                                                .order_by(func.extract('hour', Orders.date_added)).all()
+    
+    print(revenue_over_time)
+    
+    most_popular = ([label[0] for label in most_popular_products], [value[1] for value in most_popular_products])
+    revenue_time = ([label[0] for label in revenue_over_time], [value[1] for value in revenue_over_time])
 
-    popular_labels = [product[0] for product in most_popular_products]
-    popular_values = [product[1] for product in most_popular_products]
-    print(popular_labels)
-    print(popular_values)
-    return render_template('adminAnalysis.html', popular_labels=popular_labels, popular_values=popular_values)
+
+    return render_template('adminAnalysis.html', most_popular=most_popular, revenue_time=revenue_time)

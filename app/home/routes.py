@@ -55,7 +55,7 @@ def login():
                 print("Password Valid")
                 login_user(user)
                 if user.type == "Admin":
-                    return redirect(url_for('admin.admin'))
+                    return redirect(url_for('admin.admin_home'))
                 else:
                     return redirect(url_for('home.home'))
             else:

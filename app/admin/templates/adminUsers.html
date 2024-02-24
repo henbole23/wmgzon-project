@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% include 'headers/adminHeader.html' %}
+
+{% block title %} Home {% endblock %}
+
+
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="jumbotron p-3">
+        <h2>Manage Users</h2>
+
+        {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+        {% for message, alert in messages %}
+        <div class="alert alert-{{alert}} alert-dismissable" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        {% endfor %}
+        {% endif %}
+        {% endwith%}
+
+        <table class="table table-hover table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Date Created</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+          {% for user in users: %}
+          <tr>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.type }}</td>
+            <td>{{ user.date_added }}</td>
+            <td><a class="btn btn-warning btn-xs" data-bs-toggle="modal"
+                data-bs-target="#editusermodal{{user.user_id}}">Edit</a></td>
+            <td><a href="{{ url_for('admin.delete_user', id=user.user_id)}}" type="button" class="btn btn-danger btn-xs"
+                onclick="return confirm('Confirm User {{user.user_id}} Deletion')">Delete</button></td>
+          </tr>
+
+          <!-- Edit User Modal -->
+          <div class="modal fade" id="editusermodal{{ user.user_id }}" data-bs-backdrop="static"
+            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Edit User</h5>
+                </div>
+                <form action="" method="POST">
+                  {{ user_form.csrf_token }}
+                  {{ user_form.hidden_tag() }}
+                  <div class="modal-body">
+                    <div class="form-group">
+                      {{ user_form.username.label }}
+                      {{ user_form.username(class="form-control", value=user.username) }}
+                    </div>
+                    <div class="form-group">
+                      {{ user_form.email.label }}
+                      {{ user_form.email(class="form-control", value=user.email) }}
+                    </div>
+                    <div class="form-group">
+                      {{ user_form.type.label }}
+                      {{ user_form.type(class="form-control", type="number", value=user.type) }}
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    {{ user_form.submit(class="btn btn-primary") }}
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

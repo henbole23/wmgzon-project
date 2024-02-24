@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% include 'headers/productHeader.html' %}
+{% block body %}
+<script>categoryIdentifier()</script>
+{% if products %}
+<div class="trendingProducts" id="productBar"
+    style="background-color: orange; border-radius: 25px; margin: 10px; padding: 15px;">
+    <h3 style="padding-left:25px; margin-top: 5px;">Trending Right Now</h3>
+    <div class="productBar">
+        <div class="card-group">
+            {% for product in popular_products: %}
+            <div class="col-sm-6 col-md-2 col-lg-1" style="margin:10px;">
+                <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
+                    <div class="card h-100" style="border-radius: 25px;">
+                        <img src="..\static\products_artwork\{{ product.image }}"
+                            style="border-top-left-radius: 25px; border-top-right-radius: 25px;"
+                            alt="{{ product.name }} album art">
+                        <div class="card-body justify-content-center">
+                            <p class="card-text">{{ product.name }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="productSection" style="background-color: lightgrey; border-radius: 25px; margin: 10px; padding: 15px;">
+    {% if page_name == "music" %}
+    <div id="productHeader"
+        class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between"
+        style="background-color: grey; border-radius: 50px; height: 105%; padding: 15px;">
+        <div class="d-flex flex-column flex-md-row align-items-md-center">
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary btn-sm mb-2 mb-md-0" data-bs-toggle="modal"
+                    data-bs-target="#filterModal">
+                    <h4>Filter</h4>
+                </button>
+            </div>
+            <form id="productSortForm" class="row mx-2" action="/{{ page_name }}" method="POST">
+                <input type="hidden" name="sortFormId" value="sortForm">
+                <div class="col-auto d-flex align-items-center">
+                    <label for="sortOptions" class="form-label mb-0">
+                        <h4>Sort:</h4>
+                    </label>
+                </div>
+                <div class="col-auto">
+                    <select name="sort" id="sortOptions" class="form-select w-auto">
+                        <option value="descend">Release Year: Newest to Oldest</option>
+                        <option value="ascend">Release Year: Oldest to Newest</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div>
+            <h4>{{ products | length }} Result{% if products | length > 1 %}s{% endif %}</h4>
+        </div>
+    </div>
+    {% endif %}
+    <div class="card-group" id="products">
+        {% for product in products: %}
+        <div class="col-sm-6 col-md-4 col-lg-2 product" data-year="{{ product.music_info[0].year }}"
+            style="margin-bottom: 20px;">
+            <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
+                <div class="card h-100" style="border-radius: 25px; margin: 10px;">
+                    <img src="..\static\products_artwork\{{ product.image }}"
+                        style="border-top-left-radius: 25px; border-top-right-radius: 25px;"
+                        alt="{{ product.name }} album art">
+                    <div class="card-body justify-content-center">
+                        <h3 class="card-text">{{ product.name }}</h3>
+                        <h5 class="card-text prices">{{ product.price }}</h5>
+                        <script>priceConversion('h5', 'prices')</script>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    document.getElementById('sortOptions').addEventListener('change', sortProductYear);
+    sortProductYear();
+</script>
+
+</div>
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {{ filter_form.csrf_token }}
+                    {{ filter_form.hidden_tag() }}
+                    {{ filter_form.artist.label }}
+                    {{ filter_form.artist(class="form-control") }}
+                    {{filter_form.genre.label }}
+                    {{filter_form.genre(class="form-control") }}
+            </div>
+            <div class="modal-footer">
+                {{ filter_form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<h1>{{ page_name }} Page Coming Soon</h1>
+{% endif %}
+{% endblock %}

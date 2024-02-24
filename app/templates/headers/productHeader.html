@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}wmgzon{% endblock %}
+{% block body %}
+<nav class="navbar navbar-dark">
+    <div class="container d-flex justify-content-center justify-content-md-between align-items-center">
+        <a class="navbar-brand" href="/">
+            <img src="../static/wmgzon_logo.png" alt="wmgzon logo" style="width: 250px;" />
+        </a>
+        <form class="d-flex justify-content-center" method="POST" action="{{ url_for('home.search') }}">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
+            {{ form.search_field(class="form-control me-2", style="width: auto;") }}
+            {{ form.submit(class="btn btn-primary", placeholder="Search") }}
+        </form>
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('basket.view_basket') }}">
+                    <button type="button" class="btn btn-outline-primary position-relative">
+                        Basket
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            id="basketCounter" style="display: none;"></span>
+                    </button>
+                </a>
+            </li>
+            {% if current_user.is_authenticated %}
+            {% if current_user.type == "Admin" %}
+            <a class="nav-link" href="{{ url_for('admin.admin') }}">
+                <button type="button" class="btn btn-outline-primary position-relative">
+                    ADMIN
+                </button>
+            </a>
+            {% else %}
+            <a class="nav-link" href="{{ url_for('home.account', username=current_user.username) }}">
+                <button type="button" class="btn btn-outline-primary position-relative"
+                    style="text-transform: capitalize">
+                    {{ current_user.username }}'s Account
+                </button>
+            </a>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('home.logout') }}">
+                    <button type="button" class="btn btn-outline-primary position-relative">
+                        Logout
+                    </button>
+                </a>
+            </li>
+            {% else %}
+            <li class="nav-item justif-content-end">
+                <a class="nav-link" href="{{ url_for('home.login') }}">
+                    <button type="button" class="btn btn-primary position-relative">
+                        Login
+                    </button>
+                </a>
+            </li>
+            <li class="nav-item justif-content-end">
+                <a class="nav-link" href="{{ url_for('home.register') }}">
+                    <button type="button" class="btn btn-primary position-relative">
+                        Register
+                    </button>
+                </a>
+            </li>
+
+            {% endif %}
+        </ul>
+
+    </div>
+</nav>
+<ul class="nav nav-pills justify-content-center">
+    <li class="nav-item">
+        <a class="nav-link" id="animals" aria-current="page" href="{{ url_for('categories.animals') }}">Animals</a>
+    </li>
+    <li class="nav-item">
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="books" aria-current="page" href="{{ url_for('categories.books') }}">Books</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="carparts" aria-current="page" href="{{ url_for('categories.car_parts') }}">Car Parts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="music" aria-current="page" href="{{ url_for('categories.music') }}">Music</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="phones" aria-current="page" href="{{ url_for('categories.phones') }}">Phones</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="sports" aria-current="page" href="{{ url_for('categories.sports') }}">Sports</a>
+    </li>
+</ul>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{category}}">
+    {{ message }}
+    <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{% endblock %}

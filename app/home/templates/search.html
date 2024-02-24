@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% include 'headers/productHeader.html' %}
+{% block body %}
+<div class="card-group">
+    {% for product in products: %}
+    <div class="col-md-2">
+        <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
+            <div class="card h-100" style="border-radius: 25px; margin:10px; margin-bottom: 5px;">
+                <img src="static\products_artwork\{{ product.image }}" style="border-top-left-radius: 25px; border-top-right-radius: 25px;" alt="{{ product.name }} album art">
+                <div class="card-body">
+                    <p class="card-text">{{ product.name }}</p>
+                    <p class="card-text prices">{{ product.price }}</p>
+                    <script>priceConversion('p', 'prices')</script>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block title %}wmgzon{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+  <div class="jumbotron p-3">
+    <div class="d-flex justify-content-center">
+      <a href="/"><img src="../static/wmgzon_logo.png" alt="wmgzon logo" style="width: 250px; overflow-x: auto;" /></a>
+    </div>
+  </div>
+</div>
+<h1 class="text-white d-flex: justify-content-center" style="text-transform: capitalize">{{ current_user.username }}'s Account</h1>
+{% endblock %}

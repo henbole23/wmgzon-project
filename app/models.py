@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 from datetime import datetime
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Float
 from app.extensions import db
 
 
@@ -32,7 +32,7 @@ class Products(db.Model):
     product_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     image = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(Float, nullable=False)
     type = db.Column(db.String, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     date_added = db.Column(
@@ -77,7 +77,8 @@ class Albums(db.Model):
         'Songs', back_populates='albums', cascade='all, delete-orphan')
     genres = db.relationship(
         'AlbumGenre', backref='album_genre', cascade='all, delete-orphan')
-    artists = db.relationship('Artists', uselist=False, back_populates='albums')
+    artists = db.relationship(
+        'Artists', uselist=False, back_populates='albums')
     products = db.relationship('Products', back_populates='music_info')
 
     def __init__(self, name, year, fk_product_id, fk_artist_id):

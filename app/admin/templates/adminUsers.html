@@ -15,8 +15,8 @@
 
         {% if messages %}
 
-        {% for message, alert in messages %}
-        <div class="alert alert-{{alert}} alert-dismissable" role="alert">
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissable" role="alert">
           {{ message }}
           <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

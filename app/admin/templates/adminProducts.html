@@ -81,8 +81,8 @@
                       readonly="true") }}
                     </div>
                     <div class="form-group">
-                      {{ product_form.product_name.label }}
-                      {{ product_form.product_name(class="form-control", value=product.name) }}
+                      {{ product_form.name.label }}
+                      {{ product_form.name(class="form-control", value=product.name) }}
                     </div>
                     <div class="form-group">
                       {{ product_form.image.label }}
@@ -129,8 +129,8 @@
         {{ product_form.hidden_tag() }}
         <div class="modal-body">
           <div class="form-group">
-            <label>{{ product_form.product_name.label }}</label>
-            {{ product_form.product_name(class="form-control") }}
+            <label>{{ product_form.name.label }}</label>
+            {{ product_form.name(class="form-control") }}
           </div>
           <div class="form-group">
             <label>{{ product_form.image.label }}</label>

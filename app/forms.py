@@ -5,6 +5,7 @@ import datetime
 
 class LoginForm(FlaskForm):
     """Class for login form fields"""
+
     username = StringField(label='Username', validators=[
                            validators.InputRequired(), validators.Length(min=4, max=16)])
     password = PasswordField(label='Password', validators=[
@@ -14,6 +15,7 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     """Class for register form fields"""
+
     email = EmailField(label='Email Address', validators=[
                        validators.InputRequired()])
     username = StringField(label='username', validators=[
@@ -26,6 +28,8 @@ class RegisterForm(FlaskForm):
 
 
 class UserEditForm(FlaskForm):
+    """Class for editing user form fields"""
+
     username = StringField(label='Username')
     email = EmailField(label='Email')
     type = SelectField(label='Role', choices=[
@@ -33,16 +37,9 @@ class UserEditForm(FlaskForm):
     submit = SubmitField(label='Edit')
 
 
-class AlbumForm(FlaskForm):
-    album_id = IntegerField(label='Album ID')
-    album_name = StringField(label='Album Name')
-    year = IntegerField(label='Release Year')
-    fk_artist_id = IntegerField(label='Artist ID')
-    fk_product_id = IntegerField(label='Product ID')
-    submit = SubmitField('Submit')
-
-
 class SongForm(FlaskForm):
+    """Class for song form fields"""
+
     song_id = IntegerField(label='Song ID')
     name = StringField(label='Song Name')
     length = IntegerField(label='Length')
@@ -50,8 +47,10 @@ class SongForm(FlaskForm):
 
 
 class ProductForm(FlaskForm):
+    """Class for product form fields"""
+
     product_id = IntegerField(label='ID')
-    product_name = StringField(label='Name')
+    name = StringField(label='Name')
     image = StringField(label='Image File (include file format)')
     price = DecimalField(label='Price', places=2)
     type = StringField(label='Type')
@@ -60,6 +59,8 @@ class ProductForm(FlaskForm):
 
 
 class MusicProductForm(ProductForm):
+    """Class for music related product data form fields"""
+
     album_name = StringField(label='Album Name')
     year = IntegerField(label='Release Year')
     artist_name = StringField(label='Artist Name')
@@ -69,6 +70,8 @@ class MusicProductForm(ProductForm):
 
 
 class AddressForm(FlaskForm):
+    """Class for address form fields"""
+
     house_number = IntegerField(label='House/Flat Number')
     street = StringField(label='Street')
     city = StringField(label='City/Town')
@@ -77,6 +80,8 @@ class AddressForm(FlaskForm):
 
 
 class PaymentForm(FlaskForm):
+    """Class for payment form fields"""
+
     card_number = StringField('Card Number', validators=[
                               validators.InputRequired(), validators.Length(min=16, max=16)])
     expiration_month = SelectField('Expiration Date', choices=[(str(i), str(
@@ -88,23 +93,23 @@ class PaymentForm(FlaskForm):
 
 
 class CheckoutForm(AddressForm, PaymentForm):
+    """Class for checkout form fields, inherits from AddressForm and PaymentForm"""
+
     email = EmailField(label='Email')
     submit = SubmitField(label='Submit Order')
 
 
 class SearchForm(FlaskForm):
+    """Class for search form fields"""
+
     search_field = StringField(label='Search Field', validators=[
                                validators.InputRequired()])
     submit = SubmitField(label='Search')
 
 
 class FilterForm(FlaskForm):
+    """Class for filter form fields"""
+
     artist = SelectField(label='Artist')
     genre = SelectField(label='Genre')
     submit = SubmitField(label='Apply')
-
-
-class SortForm(FlaskForm):
-    year = SelectField(label='Year', choices=[(
-        'descend', 'Release Year: Newest to Oldest'), ('ascend', 'Release Year: Oldest to Newest')])
-    submit = SubmitField(label='Submit')

@@ -15,18 +15,23 @@ from app.models import Users
 
 
 def create_app(database="sqlite:///wmgzon.db"):
+    """Function which creates the app and sets all neccessary configurations"""
+
     app = Flask(__name__)
+    # All blueprints required for app to run
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(basket_bp, url_prefix='/basket')
     app.register_blueprint(category_bp, url_prefix='/category')
 
+    # App configurations
     app.config["SQLALCHEMY_DATABASE_URI"] = database
     app.config["SECRET_KEY"] = secrets.token_urlsafe(16)
     app.config["SESSION_PERMANENT"] = True
     app.config["SESSION_TYPE"] = "filesystem"
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
+    # Extensions
     Session(app)
     db.init_app(app)
     bcrypt.init_app(app)
@@ -34,15 +39,18 @@ def create_app(database="sqlite:///wmgzon.db"):
 
     @app.context_processor
     def base():
+        """Function which allows for search bar to work across multiple sites"""
         search_form = SearchForm()
         return dict(form=search_form)
 
     @login_manager.user_loader
     def load_user(user_id):
+        """Function which handles user loading"""
         return db.session.query(Users).filter_by(user_id=int(user_id)).first()
 
     @login_manager.unauthorized_handler
     def unauthorised_user():
+        """Function which handles unauthorised users"""
         flash('Please Log In First', 'warning')
         return redirect(url_for('home.login'))
 

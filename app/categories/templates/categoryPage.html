@@ -59,7 +59,7 @@
     {% endif %}
     <div class="card-group" id="products">
         {% for product in products: %}
-        <div class="col-sm-6 col-md-4 col-lg-2 product" data-year="{{ product.music_info[0].year }}"
+        <div class="col-sm-6 col-md-4 col-lg-2 product" data-year="{{ product.music_info.year }}"
             style="margin-bottom: 20px;">
             <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
                 <div class="card h-100" style="border-radius: 25px; margin: 10px;">

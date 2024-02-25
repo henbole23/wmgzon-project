@@ -47,7 +47,7 @@
             <td>{{ product.type }}</td>
             <td>{{ product.stock }}</td>
             <td>
-              {% if product.music_info[0] %}
+              {% if product.music_info %}
               <a href="{{ url_for('admin.admin_product_details', id=product.product_id) }}"
                 class="btn btn-success btn-xs">View Details/Song Management</a>
               {% else %}
@@ -71,7 +71,7 @@
                 <div class="modal-header">
                   <h5 class="modal-title" id="staticBackdropLabel">Edit Product</h5>
                 </div>
-                <form action="" method="PUT">
+                <form action="" method="POST">
                   {{ product_form.csrf_token }}
                   {{ product_form.hidden_tag() }}
                   <div class="modal-body">
@@ -159,9 +159,35 @@
 </div>
 
 <script>
-  document.getElementById('new_artist_name').addEventListener('change', function () {
-    var newArtistField = document.querySelector('.new-artist-field');
-    this.value == 0 ? newArtistField.style.display = 'block' : newArtistField.style.display = 'none';
-  });
+  function makePutRequest(endpoint, id, data) {
+    var url = `${endpoint}/${id}`;
+    var formData = new FormData(document.getElementById('editproductmodal'));
+    var data = {};
+    formData.forEach(function(value, key){
+        data[key] = value;
+    });
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        alert('PUT request successful');
+      })
+      .catch(error => {
+        console.error('There was a problem with the request:', error);
+        alert('Failed to make PUT request');
+      });
+  }
 </script>
+
 {% endblock %}

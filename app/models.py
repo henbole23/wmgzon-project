@@ -38,7 +38,7 @@ class Products(db.Model):
     date_added = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     music_info = db.relationship(
-        'Albums', back_populates='products', cascade='all, delete-orphan')
+        'Albums', back_populates='products', uselist=False, cascade='all, delete-orphan')
     order_items = db.relationship(
         'OrderItems', back_populates='products', cascade='all, delete-orphan')
 
@@ -77,7 +77,7 @@ class Albums(db.Model):
         'Songs', back_populates='albums', cascade='all, delete-orphan')
     genres = db.relationship(
         'AlbumGenre', backref='album_genre', cascade='all, delete-orphan')
-    artists = db.relationship('Artists', back_populates='albums')
+    artists = db.relationship('Artists', uselist=False, back_populates='albums')
     products = db.relationship('Products', back_populates='music_info')
 
     def __init__(self, name, year, fk_product_id, fk_artist_id):

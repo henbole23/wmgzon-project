@@ -9,9 +9,9 @@
 <div class="container text-white">
   <h1><i>{{ product.name }}</i> Product Details</h1>
   <h3>Album Name</h3>
-  {{product.music_info[0].name}}
+  {{product.music_info.name}}
   <h3>Release Year</h3>
-  {{product.music_info[0].year}}
+  {{product.music_info.year}}
   <h3>Genres</h3>
   <ul class="list-inline">
     {% for genre in genres %}
@@ -20,9 +20,9 @@
   </ul>
 
   <h3>Artist Name</h3>
-  {{ product.music_info[0].artists.name }}
+  {{ product.music_info.artists.name }}
   <h3>Artist Bio</h3>
-  {{ product.music_info[0].artists.bio }}
+  {{ product.music_info.artists.bio }}
 </div>
 
 <div class="container text-white">
@@ -55,7 +55,7 @@
             <th>Edit</th>
             <th>Delete</th>
           </tr>
-          {% for song in product.music_info[0].songs: %}
+          {% for song in product.music_info.songs: %}
           <tr>
             <td>{{ song.song_id }}</td>
             <td>{{ song.name }}</td>

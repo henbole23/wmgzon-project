@@ -9,14 +9,18 @@ home_bp = Blueprint('home', __name__, template_folder='templates')
 
 
 @home_bp.route('/')
+# Route for the landing page of the site
 def home():
+    # Query to retrieve products recently added to the database which are populated in a bootstrap carousel
     recently_added = db.session.query(Products).order_by(
         Products.date_added.desc()).limit(5).all()
+    # Query which retrieves all products in teh database
     products = db.session.query(Products).all()
     return render_template('index.html', products=products, recently_added=recently_added)
 
 
 @home_bp.route('/register', methods=['GET', 'POST'])
+# Route for the account registration page
 def register():
     register_form = RegisterForm()
     if register_form.validate_on_submit():

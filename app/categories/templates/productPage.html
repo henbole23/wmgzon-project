@@ -12,7 +12,7 @@
         <div class="box col-lg-6 text-white"">
             <h2 style=" display: inline; margin-right: 10px;">{{ product.name }}</h2>
             {% if product.music_info %}
-            <h6 style="display: inline;"><i>{{ product.music_info[0].artists.name }}</i></h6>
+            <h6 style="display: inline;"><i>{{ product.music_info.artists.name }}</i></h6>
             {% else %}
             <h6 style="display: inline;"><i>Unknown Artist</i></h6>
             {% endif %}

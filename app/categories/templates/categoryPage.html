@@ -2,6 +2,7 @@
 {% include 'headers/productHeader.html' %}
 {% block body %}
 <script>categoryIdentifier()</script>
+<h1 class="text-white d-flex justify-content-center" style="text-transform: capitalize">{{page_name}} Page</h1>
 {% if products %}
 <div class="trendingProducts" id="productBar"
     style="background-color: orange; border-radius: 25px; margin: 10px; padding: 15px;">
@@ -61,7 +62,8 @@
         {% for product in products: %}
         <div class="col-sm-6 col-md-4 col-lg-2 product" data-year="{{ product.music_info.year }}"
             style="margin-bottom: 20px;">
-            <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
+            <a id="product {{ product.product_id }}"
+                href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
                 <div class="card h-100" style="border-radius: 25px; margin: 10px;">
                     <img src="..\static\products_artwork\{{ product.image }}"
                         style="border-top-left-radius: 25px; border-top-right-radius: 25px;"

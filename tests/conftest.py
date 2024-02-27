@@ -6,7 +6,7 @@ from app.models import Products, Albums, Artists, AlbumGenre, Genres
 @pytest.fixture()
 # Configuration of the app test environment
 def app():
-    # Creates database in memory which saves teardown of database after each test
+    """Function which creates database in memory"""
     app = create_app(database="sqlite://")
     app.config['TESTING'] = True
     app.config['WTF_CSRF_ENABLED'] = False
@@ -24,6 +24,7 @@ def client(app):
 
 @pytest.fixture()
 def sample_product_data(app):
+    """Function which adds test data to the database in memory"""
     for product in range(1, 3):
         test_product = Products(name=f'Music Test Product {product}',
                                 image=f'test{product}_test.jpg',

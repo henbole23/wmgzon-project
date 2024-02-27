@@ -25,9 +25,9 @@ def test_registration(client, app):
         # Checks a row has been added to the database
         assert db.session.query(Users).count() == 1
         # Checks the correct email has been added
-        assert user.email == mock_data['email']
+        assert user.email == mock_data['email']  # type: ignore
         # Checks that the password stored isn't what the user entered (has been hashed)
-        assert user.password != mock_data['password']
+        assert user.password != mock_data['password']  # type: ignore
 
 
 def test_customer_login(client, app):

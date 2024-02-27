@@ -1,8 +1,12 @@
+# Specifies base image to use
 FROM python:3.9-slim
 
-
+# Sets the working directory to app
 WORKDIR /app
+# Copies files from current working directory into the app
 COPY . /app
+
+# Installs all requirements 
 RUN pip install -r requirements.txt
 
 # Make port 5000 available to the world outside this container
@@ -11,5 +15,5 @@ EXPOSE 5000
 # Define environment variable
 ENV FLASK_APP=app.py
 
-# Run app.py when the container launches
+# Runs the app when the container launches
 CMD ["flask", "run", "--host=0.0.0.0"]

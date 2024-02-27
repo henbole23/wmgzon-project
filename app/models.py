@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import ForeignKey, Float
 from app.extensions import db
 
@@ -13,7 +13,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(100), nullable=False, unique=True)
     type = db.Column(db.String(25), default="Customer", nullable=False)
     date_added = db.Column(
-        db.DateTime, default=datetime.utcnow, nullable=False)
+        db.DateTime, default=datetime.now(timezone.utc), nullable=False)
     orders = db.relationship('Orders', back_populates='users')
 
     def __init__(self, username, password, email, type="Customer"):
@@ -36,7 +36,7 @@ class Products(db.Model):
     type = db.Column(db.String, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     date_added = db.Column(
-        db.DateTime, default=datetime.utcnow, nullable=False)
+        db.DateTime, default=datetime.now(timezone.utc), nullable=False)
     music_info = db.relationship(
         'Albums', back_populates='products', uselist=False, cascade='all, delete-orphan')
     order_items = db.relationship(

@@ -43,7 +43,7 @@ def test_product_filter_redirect(client, app, sample_product_data):
     """Function for checking that filter function works"""
     response = client.post('/category/music', data={'artist': 1, 'genre': 1})
 
-    # Check the post request has successfullr redirected user
+    # Check the post request has successfully redirected user
     assert response.status_code == 302
 
 

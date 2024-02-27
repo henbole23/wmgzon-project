@@ -3,6 +3,8 @@ from app.extensions import db, bcrypt
 
 
 def test_registration(client, app):
+    """Function for testing registration functionality works"""
+
     # Get request for the registration page
     response = client.get('/register')
     # Check register page loaded
@@ -29,6 +31,8 @@ def test_registration(client, app):
 
 
 def test_customer_login(client, app):
+    """Function for testing login functionality works"""
+
     with client:
         # Get request for the login page
         response = client.get('/login')

@@ -30,6 +30,9 @@ def music():
     # Adds a no filter option for the genre filter
     filter_form.genre.choices.insert(0, ('no_filter', 'No Filter'))
 
+    if filter_form.validate_on_submit():
+        return redirect(url_for('categories.music_filters', artist=filter_form.artist.data, genre=filter_form.genre.data))
+
     # Queries database for the top 10 most popular products determined by quantity sold
     popular_products = Products.query.join(OrderItems, Products.product_id == OrderItems.fk_product_id) \
         .group_by(Products.product_id)\
@@ -39,9 +42,6 @@ def music():
     # Sets query for collating the music products and their related data
     products = db.session.query(Products).join(Albums).join(Artists).join(
         AlbumGenre).join(Genres).filter(Products.type == 'music')
-
-    if filter_form.validate_on_submit():
-        return redirect(url_for('categories.music_filters', artist=request.form['artist'], genre=request.form['genre']))
 
     # Queries the database
     products = products.all()

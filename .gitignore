@@ -1,2 +1,5 @@
 env/
 venv/
+bootstrap-5.3.2-dist/
+flask_session/
+working-screenshots/

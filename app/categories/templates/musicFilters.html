@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% include 'headers/productHeader.html' %}
+{% block body %}
+<h3 class="text-white" style="margin: 20px;">{{ products | length }} Result{% if products | length > 1 %}s{% endif %}</h3>
+<div class="card-group">
+    {% for product in products: %}
+    <div class="col-md-2" style="margin: 10px;">
+        <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
+            <div class="card" style="margin: 20px;  border-radius: 25px;">
+                <img src="..\static\products_artwork\{{ product.image }}" alt="{{ product.name }} album art" style="border-top-left-radius: 25px; border-top-right-radius: 25px;">
+                <div class="card-body">
+                    <p class="card-text">{{ product.name }}</p>
+                    <p class="card-text prices">{{ product.price }}</p>
+                    <script>priceConversion('p', 'prices')</script>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% include 'headers/productHeader.html' %}
+{% block body %}
+<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner" style="transition-duration: 0.05s;">
+    {% for product in recently_added %}
+    <div class="carousel-item {% if loop.index == 1 %}active{% endif %}" style="position: relative; width: 100vw; height: 35vh; background-image: url('../static/products_artwork/{{ product.image }}'); background-size: cover; background-position: center center;">
+      <div class="d-flex justify-content-center align-items-end h-100 position-absolute w-100">
+        <div class="text-center">
+          <h1 style="color: white;">{{ product.name }}</h1>
+          <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}"><button class="btn btn-primary" style="margin-bottom: 20px;"><h3>BUY NOW</h3></button></a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="card-group">
+  {% for product in products: %}
+  <div class="col-sm-6 col-md-4 col-lg-2" style="margin-bottom: 20px;">
+      <a href="{{ url_for('categories.get_product_page', product_id=product.product_id) }}">
+          <div class="card h-100" style="border-radius: 25px; margin:10px; margin-bottom: 5px;">
+              <img src="static\products_artwork\{{ product.image }}" style="border-top-left-radius: 25px; border-top-right-radius: 25px;" alt="{{ product.name }} album art">
+              <div class="card-body justify-content-center">
+                <h3 class="card-text">{{ product.name }}</h3>
+                <h5 class="card-text prices">{{ product.price }}</h5>
+                <script>priceConversion('h5', 'prices')</script>
+              </div>
+          </div>
+      </a>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

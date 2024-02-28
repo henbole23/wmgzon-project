@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% include 'headers/adminHeader.html' %}
+
+{% block body %}
+<style>
+  .chart-container {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+  }
+</style>
+
+<div class="jumbotron p-3">
+  <h3 class="text-white d-flex justify-content-center">Website Analysis</h3>
+</div>
+<div class="card chart-container text-white" style="background-color: rgb(41, 41, 41); margin-bottom: 30px;">
+  <h5 class="d-flex justify-content-center">Top 5 Products</h5>
+  <canvas id="mostPopularChart"></canvas>
+</div>
+<div class="card chart-container text-white" style="background-color: rgb(41, 41, 41);">
+  <h5 class="d-flex justify-content-center">Revenue Over Time</h5>
+  <canvas id="revenueByHourChart"></canvas>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js">
+</script>
+<script>
+  function createChart(title, labels, values, context, type) {
+    const myChart = new Chart(context, {
+      type: type,
+      data: {
+        labels: labels,
+        datasets: [{
+          label: title,
+          backgroundColor: '#FF9900',
+          borderColor: 'black',
+          data: values,
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+            }
+          }]
+        }
+      },
+    });
+  }
+
+  const most_popular_context = document.getElementById("mostPopularChart").getContext('2d');
+  const most_popular_labels = {{ most_popular[0] | tojson }};
+  const most_popular_values = {{ most_popular[1] | tojson }};
+  createChart('Products Sold', most_popular_labels, most_popular_values, most_popular_context, 'bar')
+
+  const revenue_time_context = document.getElementById("revenueByHourChart").getContext('2d')
+  const revenue_time_labels = {{ revenue_time[0] | tojson }};
+  const revenue_time_values = {{ revenue_time[1] | tojson }};
+  createChart('Revenue by Hour', revenue_time_labels, revenue_time_values, revenue_time_context, 'line')
+</script>
+
+</html>
+{% endblock %}
